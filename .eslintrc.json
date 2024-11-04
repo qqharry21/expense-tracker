@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "@typescript-eslint/no-require-imports": [
+      "error",
+      {
+        "allow": ["tailwind.config.ts"]
+      }
+    ]
+  },
+  "extends": ["next/core-web-vitals", "next/typescript"]
+}

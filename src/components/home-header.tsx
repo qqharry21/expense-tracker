@@ -14,23 +14,6 @@ export const HomeHeader = () => {
               <DollarSign className='h-8 w-8 text-primary' />
             </Link>
           </div>
-          {/* <nav className='hidden md:flex space-x-8'>
-            <Link
-              href='/features'
-              className='text-base font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors'>
-              Features
-            </Link>
-            <Link
-              href='/pricing'
-              className='text-base font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors'>
-              Pricing
-            </Link>
-            <Link
-              href='/about'
-              className='text-base font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors'>
-              About
-            </Link>
-          </nav> */}
           <div className='flex items-center space-x-4'>
             <Link href='/login'>
               <Button

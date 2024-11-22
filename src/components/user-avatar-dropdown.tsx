@@ -1,28 +1,24 @@
-'use client';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { UserIcon } from 'lucide-react';
 import { User } from 'next-auth';
-import { useState } from 'react';
-import { SignoutButton } from '../signout-button';
+import Link from 'next/link';
+import { SignoutButton } from './signout-button';
 
-interface UserAvatarDropdownProps extends PropsWithChildren {
+interface UserAvatarDropdownProps {
   user: User;
 }
 
-export function UserAvatarDropdown({ user, children }: UserAvatarDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
+export function UserAvatarDropdown({ user }: UserAvatarDropdownProps) {
   return (
-    <DropdownMenu
-      open={isOpen}
-      onOpenChange={setIsOpen}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant='ghost'
@@ -47,7 +43,15 @@ export function UserAvatarDropdown({ user, children }: UserAvatarDropdownProps) 
           </div>
         </div>
         <DropdownMenuSeparator />
-        {children}
+        <DropdownMenuItem asChild>
+          <Link
+            href='/dashboard'
+            className='flex items-center'>
+            <UserIcon className='h-4 w-4' />
+            <span>前往後台頁面</span>
+          </Link>
+        </DropdownMenuItem>
+        <SignoutButton />
       </DropdownMenuContent>
     </DropdownMenu>
   );

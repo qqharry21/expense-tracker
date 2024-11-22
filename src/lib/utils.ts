@@ -9,3 +9,11 @@ export function cn(...inputs: ClassValue[]) {
 export function getCurrentDate(format: string = 'yyyy-MM-dd') {
   return formatDate(new Date(), format);
 }
+
+export const getInitialsFromName = (name: string) => {
+  const initials = name
+    .split(' ')
+    .map((word) => word[0])
+    .join('');
+  return initials.substring(0, 2).toUpperCase();
+};

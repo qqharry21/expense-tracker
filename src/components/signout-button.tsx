@@ -13,7 +13,7 @@ export const SignoutButton = () => {
         <button
           type='submit'
           className='w-full'>
-          <LogOut className='mr-2 h-4 w-4' />
+          <LogOut className='h-4 w-4' />
           <span>登出</span>
         </button>
       </DropdownMenuItem>

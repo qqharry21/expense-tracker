@@ -11,28 +11,20 @@ export const routes = [
     value: 'tags',
     label: '標籤列表',
   },
-  // {
-  //   value: 'income',
-  //   label: '收入列表',
-  // },
+  {
+    value: 'income',
+    label: '收入列表',
+  },
   {
     value: 'budget',
     label: '預算列表',
   },
-  // {
-  //   value: 'category',
-  //   label: '分類列表',
-  // },
-  // {
-  //   value: 'account',
-  //   label: '帳戶列表',
-  // },
-  // {
-  //   value: 'report',
-  //   label: '報表',
-  // },
   {
     value: 'setting',
     label: '設定',
   },
 ];
+
+export const ROOT = '/';
+export const PUBLIC_ROUTES = [ROOT, '/api', '/api/auth/callback/google'];
+export const PROTECTED_ROUTES = routes.map((route) => `/${route.value}`);

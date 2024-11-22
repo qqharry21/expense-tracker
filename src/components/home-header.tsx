@@ -1,8 +1,12 @@
-import { Button } from '@/components/ui/button';
+import { auth } from '@/auth';
 import { DollarSign } from 'lucide-react';
 import Link from 'next/link';
+import { SigninButton } from './signin-button';
+import { UserAvatarDropdown } from './user-avatar-dropdown';
 
-export const HomeHeader = () => {
+export const HomeHeader = async () => {
+  const session = await auth();
+  console.log('🚨 - session', session);
   return (
     <header className='absolute top-0 left-0 right-0 z-10'>
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
@@ -15,16 +19,7 @@ export const HomeHeader = () => {
             </Link>
           </div>
           <div className='flex items-center space-x-4'>
-            <Link href='/login'>
-              <Button
-                variant='ghost'
-                className='text-base font-medium'>
-                登入
-              </Button>
-            </Link>
-            <Link href='/signup'>
-              <Button className='text-base font-medium'>註冊</Button>
-            </Link>
+            {session?.user ? <UserAvatarDropdown user={session.user} /> : <SigninButton />}
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@
     "@typescript-eslint/no-require-imports": [
       "error",
       {
-        "allow": ["tailwind.config.ts"]
+        "allow": ["**/tailwind.config.ts"]
       }
     ],
     "@typescript-eslint/no-unused-vars": "warn",

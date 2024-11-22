@@ -1,30 +1,29 @@
-// models/Expense.ts
 import { Frequency } from '@/lib/types';
 import mongoose, { Document, Model, Schema } from 'mongoose';
 import { IUser } from './User';
 
-export interface IExpense extends Document {
+export interface IIncome extends Document {
   user: IUser['_id'];
-  category: string;
+  source: string;
   amount: number;
   frequency: Frequency;
-  dueDate: Date;
+  dateReceived: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const ExpenseSchema: Schema = new Schema(
+const IncomeSchema: Schema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    category: { type: String, required: true },
+    source: { type: String, required: true },
     amount: { type: Number, required: true },
     frequency: { type: String, enum: Frequency, required: true },
-    dueDate: { type: Date, required: true },
+    dateReceived: { type: Date, required: true },
   },
   { timestamps: true }
 );
 
-const Expense: Model<IExpense> =
-  mongoose.models.Expense || mongoose.model<IExpense>('Expense', ExpenseSchema);
+const Income: Model<IIncome> =
+  mongoose.models.Income || mongoose.model<IIncome>('Income', IncomeSchema);
 
-export default Expense;
+export default Income;

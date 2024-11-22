@@ -1,14 +1,12 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export interface ITag {
+export interface ITag extends Document {
   name: string;
   color?: string;
   description?: string;
 }
 
-type ITagDocument = ITag & Document;
-
-const TagSchema: Schema = new Schema<ITagDocument>(
+const TagSchema: Schema = new Schema<ITag>(
   {
     name: { type: String, required: true, unique: true },
     color: { type: String },
@@ -19,4 +17,4 @@ const TagSchema: Schema = new Schema<ITagDocument>(
   }
 );
 
-export default mongoose.models.Tag || mongoose.model<ITagDocument>('Tag', TagSchema);
+export default mongoose.models.Tag || mongoose.model<ITag>('Tag', TagSchema);

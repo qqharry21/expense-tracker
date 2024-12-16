@@ -47,6 +47,7 @@ interface DashboardSidebarProps {
 
 export async function DashboardSidebar({ expenses }: DashboardSidebarProps) {
   const session = await auth();
+  console.log('🚨 - session', session);
   if (!session?.user) {
     return;
     // redirect('/');
@@ -54,7 +55,7 @@ export async function DashboardSidebar({ expenses }: DashboardSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader className='h-16 border-b border-sidebar-border'>
-        <NavUser user={session?.user}>
+        <NavUser user={session.user}>
           <SignoutButton />
         </NavUser>
       </SidebarHeader>

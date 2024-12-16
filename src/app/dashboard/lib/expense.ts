@@ -1,5 +1,3 @@
-'use server';
-
 import dbConnect from '@/lib/mongodb';
 import Expense, { IExpense } from '@/models/Expense';
 import { cache } from 'react';

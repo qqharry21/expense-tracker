@@ -1,5 +1,5 @@
 export enum Frequency {
   MONTHLY = 'MONTHLY',
   ANNUAL = 'ANNUAL',
-  ONCE = 'ONCE',
+  ONE_TIME = 'ONE_TIME',
 }

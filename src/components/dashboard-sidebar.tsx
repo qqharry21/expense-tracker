@@ -2,7 +2,6 @@ import { Plus } from 'lucide-react';
 
 import { auth } from '@/auth';
 import { Calendars } from '@/components/calendars';
-import { DashboardDatePicker } from '@/components/dashboard-date-picker';
 import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
@@ -15,7 +14,7 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
-import { IExpense } from '@/models/Expense';
+import { Types } from '@/lib/types';
 import { SignoutButton } from './signout-button';
 
 // This is sample data.
@@ -42,12 +41,11 @@ const data = {
 };
 
 interface DashboardSidebarProps {
-  expenses: IExpense[];
+  expenses: Types.Expense[];
 }
 
 export async function DashboardSidebar({ expenses }: DashboardSidebarProps) {
   const session = await auth();
-  console.log('🚨 - session', session);
   if (!session?.user) {
     return;
     // redirect('/');
@@ -60,7 +58,7 @@ export async function DashboardSidebar({ expenses }: DashboardSidebarProps) {
         </NavUser>
       </SidebarHeader>
       <SidebarContent>
-        <DashboardDatePicker expenses={expenses} />
+        {/* <DashboardDatePicker expenses={expenses} /> */}
         <SidebarSeparator className='mx-0' />
         <Calendars calendars={data.calendars} />
       </SidebarContent>

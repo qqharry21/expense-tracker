@@ -8,11 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { IExpense } from '@/models/Expense';
+import { Types } from '@/lib/types';
+import { formatDate } from 'date-fns';
 import React from 'react';
 
 interface ExpenseTableProps {
-  expenses: IExpense[];
+  expenses: Types.Expense[];
 }
 
 export const ExpenseTable = ({ expenses }: ExpenseTableProps) => {
@@ -38,14 +39,16 @@ export const ExpenseTable = ({ expenses }: ExpenseTableProps) => {
           </TableHeader>
           <TableBody>
             {expenses.map((expense) => (
-              <React.Fragment key={expense._id}>
+              <React.Fragment key={expense.id}>
                 <TableRow
                   className='cursor-pointer'
-                  onClick={() => toggleRowExpansion(expense._id)}>
-                  <TableCell className='font-medium'>{expense.date}</TableCell>
+                  onClick={() => toggleRowExpansion(expense.id)}>
+                  <TableCell className='font-medium'>
+                    {formatDate(expense.dueDate, 'PPP')}
+                  </TableCell>
                   <TableCell>{expense.category}</TableCell>
                   <TableCell>{expense.amount}</TableCell>
-                  <TableCell>{expense.type}</TableCell>
+                  <TableCell>{expense.frequency}</TableCell>
                   <TableCell className='max-w-[200px] truncate'>{expense.description}</TableCell>
                   <TableCell className=''>
                     {/* <div className='flex flex-wrap gap-1'>

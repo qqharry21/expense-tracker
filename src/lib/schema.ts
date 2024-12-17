@@ -1,4 +1,4 @@
-import { Frequency } from '@/lib/types';
+import { Types } from '@/lib/types';
 import { z } from 'zod';
 
 export const expenseSchema = z.object({
@@ -10,11 +10,14 @@ export const expenseSchema = z.object({
     .max(255),
   dueDate: z.date(),
   category: z.enum(['food', 'traffic', 'entertainment', 'accommodation', 'others']),
-  amount: z.string().regex(/^(?!0\.00)\d{1,6}(\.\d{1,2})?$/, {
-    message:
-      'Amount must be a valid number greater than 0 and not more than 500000 with up to two decimal places',
-  }),
-  frequency: z.enum([Frequency.ONE_TIME, Frequency.MONTHLY, Frequency.ANNUAL]),
+  amount: z.number().min(1).max(500000),
+  frequency: z.enum([
+    Types.Frequency.ONE_TIME,
+    Types.Frequency.DAILY,
+    Types.Frequency.WEEKLY,
+    Types.Frequency.MONTHLY,
+    Types.Frequency.ANNUALLY,
+  ]),
   description: z.string().max(255),
 });
 

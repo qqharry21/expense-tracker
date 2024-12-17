@@ -1,9 +1,8 @@
 'use client';
 
 import { format } from 'date-fns';
-import { CalendarIcon, PlusIcon } from 'lucide-react';
+import { AlertCircle, CalendarIcon, PlusIcon } from 'lucide-react';
 
-import createExpenseAction from '@/app/dashboard/expense/actions';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -24,25 +23,23 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ExpenseFormValue, expenseSchema } from '@/lib/schema';
-import { Frequency } from '@/lib/types';
+import { Types } from '@/lib/types';
 import { cn, formatNumber } from '@/lib/utils';
-import { IExpense } from '@/models/Expense';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useCallback, useState } from 'react';
 
-import { useRouter } from 'next/navigation';
+import { createExpense } from '@/actions/expense';
+import { useMutation } from 'http-react';
 import { useForm } from 'react-hook-form';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
 
 interface ExpenseDialogProps {
-  userId?: string | null;
-  expenses: IExpense[];
+  expenses: Types.Expense[];
 }
 
-export const ExpenseDialog = ({ userId, expenses }: ExpenseDialogProps) => {
-  console.log('🚨 - userId', userId);
+export const ExpenseDialog = ({ expenses }: ExpenseDialogProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const router = useRouter();
 
   const form = useForm<ExpenseFormValue>({
     mode: 'onSubmit',
@@ -51,28 +48,21 @@ export const ExpenseDialog = ({ userId, expenses }: ExpenseDialogProps) => {
       title: '',
       dueDate: new Date(),
       category: 'food',
-      amount: '0',
-      frequency: Frequency.ONE_TIME,
+      amount: 0,
+      frequency: Types.Frequency.ONE_TIME,
       description: '',
     },
   });
 
-  const onSubmit = async (data: ExpenseFormValue) => {
-    try {
-      if (!userId) {
-        return router.push('/');
-      }
-      const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => {
-        formData.append(key, value.toString());
-      });
-      formData.append('userId', userId);
-      const response = await createExpenseAction(formData);
-      console.log('🚨 - response', response);
-    } catch (error) {}
-  };
+  const { refresh, error } = useMutation(createExpense, {
+    params: form.getValues(),
+    onResolve() {
+      form.reset();
+      setIsDialogOpen(false);
+    },
+  });
 
-  console.log('🚨 - form', form.getValues());
+  const onSubmit = form.handleSubmit(refresh);
 
   const handleKeydown = (event: React.KeyboardEvent<HTMLFormElement>) => {
     if (event.key === 'Enter') {
@@ -109,10 +99,11 @@ export const ExpenseDialog = ({ userId, expenses }: ExpenseDialogProps) => {
         <DialogHeader>
           <DialogTitle>新增支出</DialogTitle>
         </DialogHeader>
+
         <Form {...form}>
           <form
             onKeyDown={handleKeydown}
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={onSubmit}
             className='space-y-4 px-1 py-2 md:px-4 md:py-4'>
             <FormField
               name='title'
@@ -230,7 +221,7 @@ export const ExpenseDialog = ({ userId, expenses }: ExpenseDialogProps) => {
                       type='number'
                       placeholder='輸入金額'
                       onChange={(event) => {
-                        field.onChange(formatNumber(event.target.value).toString());
+                        field.onChange(formatNumber(event.target.value));
                       }}
                       onBlur={(event) => {
                         event.target.value = formatNumber(event.target.value).toString();
@@ -256,9 +247,11 @@ export const ExpenseDialog = ({ userId, expenses }: ExpenseDialogProps) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={Frequency.ONE_TIME}>一次性</SelectItem>
-                      <SelectItem value={Frequency.MONTHLY}>每月固定開銷</SelectItem>
-                      <SelectItem value={Frequency.ANNUAL}>每年固定開銷</SelectItem>
+                      <SelectItem value={Types.Frequency.ONE_TIME}>一次性</SelectItem>
+                      <SelectItem value={Types.Frequency.DAILY}>每日固定開銷</SelectItem>
+                      <SelectItem value={Types.Frequency.WEEKLY}>每週固定開銷</SelectItem>
+                      <SelectItem value={Types.Frequency.MONTHLY}>每月固定開銷</SelectItem>
+                      <SelectItem value={Types.Frequency.ANNUALLY}>每年固定開銷</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -316,6 +309,13 @@ export const ExpenseDialog = ({ userId, expenses }: ExpenseDialogProps) => {
                 </FormItem>
               )}
             /> */}
+            {error && (
+              <Alert variant='destructive'>
+                <AlertCircle className='h-4 w-4' />
+                <AlertTitle>An error occurred</AlertTitle>
+                <AlertDescription>{JSON.stringify(error)}</AlertDescription>
+              </Alert>
+            )}
             <Button
               type='submit'
               className='w-full'>

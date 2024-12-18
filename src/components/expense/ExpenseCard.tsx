@@ -86,15 +86,11 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
         </CardHeader>
         <CardContent className='flex-grow'>
           <div className='flex flex-col space-y-4'>
-            <div className='flex flex-wrap items-center gap-2 justify-between'>
-              <Badge
-                variant='outline'
-                className='text-sm font-semibold'>
-                {expense.category}
-              </Badge>
+            <div className='flex flex-wrap mt-2 items-center gap-2 justify-between'>
               <span className='text-sm text-muted-foreground'>
                 {formatDate(new Date(expense.dueDate), 'MM/dd')}
               </span>
+              <Badge variant='outline'>{expense.category}</Badge>
             </div>
             <div className='flex justify-between items-center gap-2 flex-wrap'>
               <Badge

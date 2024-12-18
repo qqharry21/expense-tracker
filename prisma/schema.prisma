@@ -97,27 +97,36 @@ enum GoalStatus {
 }
 
 model Expense {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   category    String
   amount      Float
   frequency   Frequency
   description String
   dueDate     DateTime
-  userId      String    @db.ObjectId
-  user        User      @relation(fields: [userId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  Tag         Tag?      @relation("ExpenseTags", fields: [tagId], references: [id])
-  tagId       String?   @db.ObjectId
+  userId      String       @db.ObjectId
+  user        User         @relation(fields: [userId], references: [id])
+  tags        ExpenseTag[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Tag {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String    @unique
-  expenses  Expense[] @relation("ExpenseTags")
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  name      String       @unique
+  expenses  ExpenseTag[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model ExpenseTag {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  expenseId String   @db.ObjectId
+  expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  tagId     String   @db.ObjectId
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Income {

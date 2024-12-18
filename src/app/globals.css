@@ -79,15 +79,14 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-geistSans;
+    @apply bg-background text-foreground font-geistSans selection:text-primary-foreground selection:bg-primary;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
+@layer utilities {
+  .auto-grid {
+    --min-col-size: 15rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--min-col-size), 100%), 1fr));
   }
 }

@@ -1,8 +1,8 @@
 import { auth } from '@/auth';
 import { DollarSign } from 'lucide-react';
 import Link from 'next/link';
-import { SigninButton } from './signin-button';
-import { UserAvatarDropdown } from './user-avatar-dropdown';
+import { SigninButton } from '../SigninButton';
+import { UserAvatarDropdown } from '../UserAvatarDropdown';
 
 export const HomeHeader = async () => {
   const session = await auth();

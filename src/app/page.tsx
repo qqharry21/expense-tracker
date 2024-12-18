@@ -1,5 +1,5 @@
-import { HomeFooter } from '@/components/home-footer';
-import { HomeHeader } from '@/components/home-header';
+import { HomeFooter } from '@/components/layout/HomeFooter';
+import { HomeHeader } from '@/components/layout/HomeHeader';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, BarChart2, PieChart, TrendingUp } from 'lucide-react';
 import Link from 'next/link';

@@ -1,8 +1,7 @@
 import { Plus } from 'lucide-react';
 
 import { auth } from '@/auth';
-import { Calendars } from '@/components/calendars';
-import { NavUser } from '@/components/nav-user';
+import { NavUser } from '@/components/NavUser';
 import {
   Sidebar,
   SidebarContent,
@@ -15,7 +14,8 @@ import {
   SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { Types } from '@/lib/types';
-import { SignoutButton } from './signout-button';
+import { SignoutButton } from '../SignoutButton';
+import { DashboardCalendars } from './DashboardCalendars';
 
 // This is sample data.
 const data = {
@@ -60,7 +60,7 @@ export async function DashboardSidebar({ expenses }: DashboardSidebarProps) {
       <SidebarContent>
         {/* <DashboardDatePicker expenses={expenses} /> */}
         <SidebarSeparator className='mx-0' />
-        <Calendars calendars={data.calendars} />
+        <DashboardCalendars calendars={data.calendars} />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>

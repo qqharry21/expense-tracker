@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
-import { DashboardHeader } from '@/components/dashboard-header';
-import { DashboardSidebar } from '@/components/dashboard-sidebar';
+import { DashboardHeader } from '@/components/layout/DashboardHeader';
+import { DashboardSidebar } from '@/components/layout/DashboardSidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';

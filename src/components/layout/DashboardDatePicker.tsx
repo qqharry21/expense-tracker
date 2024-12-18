@@ -5,12 +5,12 @@ import { SidebarGroup, SidebarGroupContent } from '@/components/ui/sidebar';
 import { format, isAfter, isEqual, isSameMonth, startOfDay } from 'date-fns';
 import { useState } from 'react';
 
-import { IExpense } from '@/models/Expense';
+import { Types } from '@/lib/types';
 import { zhTW } from 'date-fns/locale';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 
 interface DashboardDatePickerProps {
-  expenses: IExpense[];
+  expenses: Types.Expense[];
 }
 
 export function DashboardDatePicker({ expenses }: DashboardDatePickerProps) {
@@ -20,7 +20,7 @@ export function DashboardDatePicker({ expenses }: DashboardDatePickerProps) {
 
   const getExpensesForDate = (date: Date) => {
     const filteredExpenses = expenses.filter((expense) => {
-      const initialTargetDate = startOfDay(new Date(expense.date));
+      const initialTargetDate = startOfDay(new Date(expense.dueDate));
       return (
         (isAfter(date, initialTargetDate) || isEqual(date, initialTargetDate)) &&
         date.getDate() === 4
@@ -30,7 +30,7 @@ export function DashboardDatePicker({ expenses }: DashboardDatePickerProps) {
     return filteredExpenses.map((expense) => ({
       amount: expense.amount,
       category: expense.category,
-      type: expense.type,
+      frequency: expense.frequency,
     }));
   };
 

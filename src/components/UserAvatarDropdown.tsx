@@ -10,7 +10,7 @@ import {
 import { UserIcon } from 'lucide-react';
 import { User } from 'next-auth';
 import Link from 'next/link';
-import { SignoutButton } from './signout-button';
+import { SignoutButton } from './SignoutButton';
 
 interface UserAvatarDropdownProps {
   user: User;

@@ -20,7 +20,7 @@ import { Types } from '@/lib/types';
 import { cn, formatNumber } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { createExpense } from '@/actions/expense';
+import { createExpense, updateExpense } from '@/actions/expense';
 import { useMutation } from 'http-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -52,18 +52,21 @@ export const ExpenseForm = ({
     defaultValues,
   });
 
-  const { refresh, error } = useMutation(createExpense, {
-    params: form.getValues(),
-    onResolve() {
-      form.reset();
-      toast.success(mode === 'create' ? '新增支出成功' : '更新支出成功');
-      onSuccess?.();
-    },
-    onError() {
-      toast.error(mode === 'create' ? '新增支出失敗' : '更新支出失敗');
-      onError?.();
-    },
-  });
+  const { refresh, error, isLoading } = useMutation(
+    mode === 'create' ? createExpense : updateExpense,
+    {
+      params: form.getValues(),
+      onResolve() {
+        form.reset();
+        toast.success(mode === 'create' ? '新增支出成功' : '更新支出成功');
+        onSuccess?.();
+      },
+      onError() {
+        toast.error(mode === 'create' ? '新增支出失敗' : '更新支出失敗');
+        onError?.();
+      },
+    }
+  );
 
   const onSubmit = form.handleSubmit(refresh);
 
@@ -266,7 +269,8 @@ export const ExpenseForm = ({
             /> */}
         <Button
           type='submit'
-          className='w-full col-span-2'>
+          className='w-full col-span-2'
+          disabled={isLoading || !form.formState.isValid || !form.formState.isDirty}>
           {mode === 'create' ? '新增支出' : '更新支出'}
         </Button>
       </form>

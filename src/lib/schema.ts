@@ -2,6 +2,7 @@ import { Types } from '@/lib/types';
 import { z } from 'zod';
 
 export const expenseSchema = z.object({
+  id: z.string().optional(),
   title: z
     .string()
     .min(1, {

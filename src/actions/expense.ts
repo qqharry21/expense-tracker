@@ -27,8 +27,32 @@ export async function createExpense(data: any) {
   }
 }
 
+export async function updateExpense(data: any) {
+  try {
+    const session = await auth();
+    if (!session) return actionData('Unauthorized', { status: 401 });
+
+    const parsed = expenseSchema.safeParse(data);
+    if (!parsed.success) return actionData(parsed.error.format(), { status: 400 });
+
+    const { id, ...updateData } = parsed.data;
+
+    const updatedExpense = await prisma.expense.update({
+      where: { id },
+      data: updateData,
+    });
+    revalidatePath('/dashboard/expense');
+    return actionData(updatedExpense, { status: 200 });
+  } catch (error) {
+    return actionData(error, { status: 500 });
+  }
+}
+
 export async function deleteExpense(id: string) {
   try {
+    const session = await auth();
+    if (!session) return actionData('Unauthorized', { status: 401 });
+
     const deletedExpense = await prisma.expense.delete({
       where: { id },
     });

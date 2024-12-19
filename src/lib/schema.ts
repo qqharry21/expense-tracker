@@ -10,15 +10,10 @@ export const expenseSchema = z.object({
     })
     .max(255),
   dueDate: z.date(),
-  category: z.enum(['food', 'traffic', 'entertainment', 'accommodation', 'others']),
+  currency: z.nativeEnum(Types.Currency),
+  category: z.nativeEnum(Types.Category),
   amount: z.number().min(1).max(500000),
-  frequency: z.enum([
-    Types.Frequency.ONE_TIME,
-    Types.Frequency.DAILY,
-    Types.Frequency.WEEKLY,
-    Types.Frequency.MONTHLY,
-    Types.Frequency.ANNUALLY,
-  ]),
+  frequency: z.nativeEnum(Types.Frequency),
   description: z.string().max(255),
 });
 

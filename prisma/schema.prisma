@@ -90,6 +90,28 @@ enum Frequency {
   ANNUALLY
 }
 
+enum Category {
+  FOOD
+  TRANSPORTATION
+  SHOPPING
+  ENTERTAINMENT
+  BILLS
+  HEALTH
+  LEARNING
+  INVESTMENT
+  INSURANCE
+  TRAVEL
+  OTHER
+}
+
+enum Currency {
+  USD
+  JPY
+  TWD
+  RM
+  SGD
+}
+
 enum GoalStatus {
   IN_PROGRESS
   COMPLETED
@@ -99,7 +121,8 @@ enum GoalStatus {
 model Expense {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   title       String
-  category    String
+  category    Category
+  currency    Currency
   amount      Float
   frequency   Frequency
   description String

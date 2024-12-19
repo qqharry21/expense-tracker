@@ -21,9 +21,11 @@ import { cn, formatNumber } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { createExpense, updateExpense } from '@/actions/expense';
+import { categories, currencies, frequencies } from '@/lib';
 import { useMutation } from 'http-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { CurrencySelectInput } from '../CurrencySelectInput';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 
 interface ExpenseFormProps {
@@ -33,13 +35,19 @@ interface ExpenseFormProps {
   onError?: () => void;
 }
 
+const currencyOptions = Object.entries(currencies).map(([key, value]) => ({
+  label: value.label,
+  value: key,
+}));
+
 export const ExpenseForm = ({
   mode,
   defaultValues = {
     title: '',
     dueDate: new Date(),
-    category: 'food',
-    amount: 0,
+    category: Types.Category.FOOD,
+    currency: Types.Currency.TWD,
+    amount: 500,
     frequency: Types.Frequency.ONE_TIME,
     description: '',
   },
@@ -51,6 +59,8 @@ export const ExpenseForm = ({
     resolver: zodResolver(expenseSchema),
     defaultValues,
   });
+
+  console.log('form', form.getValues());
 
   const { refresh, error, isLoading } = useMutation(
     mode === 'create' ? createExpense : updateExpense,
@@ -102,7 +112,7 @@ export const ExpenseForm = ({
           name='dueDate'
           control={form.control}
           render={({ field }) => (
-            <FormItem className='col-span-2 md:col-span-1'>
+            <FormItem className='col-span-2'>
               <FormLabel>扣款日期</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
@@ -156,40 +166,23 @@ export const ExpenseForm = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value='food'>食物</SelectItem>
-                  <SelectItem value='traffic'>交通</SelectItem>
-                  <SelectItem value='entertainment'>娛樂</SelectItem>
-                  <SelectItem value='accommodation'>住宿</SelectItem>
-                  <SelectItem value='others'>其他</SelectItem>
+                  {Object.entries(categories).map(([key, value]) => (
+                    <SelectItem
+                      key={key}
+                      value={key}>
+                      <span className='flex items-center gap-2'>
+                        <value.icon size={16} />
+                        <span>{value.label}</span>
+                      </span>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          name='amount'
-          control={form.control}
-          render={({ field }) => (
-            <FormItem className='col-span-2 md:col-span-1'>
-              <FormLabel>金額</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type='number'
-                  placeholder='輸入金額'
-                  onChange={(event) => {
-                    field.onChange(formatNumber(event.target.value));
-                  }}
-                  onBlur={(event) => {
-                    event.target.value = formatNumber(event.target.value).toString();
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <FormField
           name='frequency'
           control={form.control}
@@ -205,13 +198,36 @@ export const ExpenseForm = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value={Types.Frequency.ONE_TIME}>一次性</SelectItem>
-                  <SelectItem value={Types.Frequency.DAILY}>每日固定開銷</SelectItem>
-                  <SelectItem value={Types.Frequency.WEEKLY}>每週固定開銷</SelectItem>
-                  <SelectItem value={Types.Frequency.MONTHLY}>每月固定開銷</SelectItem>
-                  <SelectItem value={Types.Frequency.ANNUALLY}>每年固定開銷</SelectItem>
+                  {Object.entries(frequencies).map(([key, value]) => (
+                    <SelectItem
+                      key={key}
+                      value={key}>
+                      {value}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name='amount'
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className='col-span-2'>
+              <FormLabel>單位/金額</FormLabel>
+              <FormControl>
+                <CurrencySelectInput
+                  {...field}
+                  onChange={(event) => {
+                    field.onChange(formatNumber(event.target.value));
+                  }}
+                  selectedOption={form.watch('currency')}
+                  onSelectChange={(value) => form.setValue('currency', value as Types.Currency)}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

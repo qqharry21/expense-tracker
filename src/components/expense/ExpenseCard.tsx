@@ -87,7 +87,7 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
         <CardContent className='flex-grow'>
           <div className='flex flex-col space-y-4'>
             <div className='flex flex-wrap mt-2 items-center gap-2 justify-between'>
-              <span className='text-sm text-muted-foreground'>
+              <span className='text-sm group-ara text-muted-foreground'>
                 {formatDate(new Date(expense.dueDate), 'MM/dd')}
               </span>
               <Badge variant='outline'>{expense.category}</Badge>

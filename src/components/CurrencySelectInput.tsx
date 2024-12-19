@@ -1,9 +1,9 @@
-import { currencies } from '@/lib';
+import { currency } from '@/lib';
 import { formatNumber } from '@/lib/utils';
 import React from 'react';
 import { SelectInput } from './ui/select-input';
 
-const currencyOptions = Object.entries(currencies).map(([key, value]) => ({
+const currencyOptions = Object.entries(currency).map(([key, value]) => ({
   label: value.label,
   value: key,
 }));
@@ -25,8 +25,8 @@ export const CurrencySelectInput = ({
       selectPlaceholder='請選擇'
       onBlur={onBlur}
       prefix={
-        <span className='text-gray-500'>
-          {currencies[props.selectedOption as keyof typeof currencies].symbol}
+        <span className='text-gray-500 text-sm'>
+          {currency[props.selectedOption as keyof typeof currency].symbol}
         </span>
       }
     />

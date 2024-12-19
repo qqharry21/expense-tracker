@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Types } from './types';
 
-export const categories = {
+export const category = {
   [Types.Category.FOOD]: {
     label: '食物',
     icon: PizzaIcon,
@@ -60,7 +60,7 @@ export const categories = {
   },
 } as const;
 
-export const frequencies = {
+export const frequency = {
   [Types.Frequency.ONE_TIME]: '一次性',
   [Types.Frequency.DAILY]: '每日',
   [Types.Frequency.WEEKLY]: '每週',
@@ -68,7 +68,7 @@ export const frequencies = {
   [Types.Frequency.ANNUALLY]: '每年',
 } as const;
 
-export const currencies = {
+export const currency = {
   [Types.Currency.TWD]: {
     label: '台幣',
     symbol: 'NT$',
@@ -90,3 +90,17 @@ export const currencies = {
     symbol: 'S$',
   },
 } as const;
+
+export const thresholds = {
+  [Types.Frequency.ONE_TIME]: [3000, 1000],
+  [Types.Frequency.DAILY]: [300, 100],
+  [Types.Frequency.WEEKLY]: [2100, 700],
+  [Types.Frequency.MONTHLY]: [9000, 3000],
+  [Types.Frequency.ANNUALLY]: [108000, 36000],
+};
+
+export enum Level {
+  HIGH = 'HIGH',
+  MEDIUM = 'MEDIUM',
+  LOW = 'LOW',
+}

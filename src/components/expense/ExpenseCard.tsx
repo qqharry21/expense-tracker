@@ -1,10 +1,10 @@
 'use client';
 
-import { EditIcon, Loader } from 'lucide-react';
+import { EditIcon, EllipsisIcon, Loader, TrashIcon } from 'lucide-react';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Types } from '@/lib/types';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { deleteExpense } from '@/actions/expense';
 import {
@@ -24,9 +24,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { category, currency, frequency } from '@/lib';
+import { getAmountColor, getFrequencyColor } from '@/lib/utils';
 import { formatDate } from 'date-fns';
-import { EllipsisIcon, TrashIcon } from 'lucide-react';
-import { useCallback } from 'react';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { ExpenseForm } from './ExpenseForm';
@@ -36,6 +36,15 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const targetCategory = useMemo(() => category[expense.category], [expense.category]);
+
+  const frequencyColor = useMemo(() => getFrequencyColor(expense.frequency), [expense.frequency]);
+
+  const amountColor = useMemo(
+    () => getAmountColor(expense.amount, expense.frequency),
+    [expense.amount, expense.frequency]
+  );
 
   const handleOpenDialog = useCallback(() => {
     setDropdownOpen(false);
@@ -63,20 +72,34 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
   return (
     <>
       <Card className='flex flex-col'>
-        <CardHeader className='flex flex-row items-center justify-between pb-2'>
-          <CardTitle>{expense.title}</CardTitle>
+        <CardHeader className='relative space-y-0 pb-3'>
+          <CardTitle
+            className='mb-3 pr-8 truncate'
+            title={expense.title}>
+            {expense.title}
+          </CardTitle>
+          <div className='flex items-center justify-between gap-2'>
+            <span className='text-sm text-gray-500'>
+              扣款日 - {formatDate(new Date(expense.dueDate), 'MM/dd')}
+            </span>
+            <Badge
+              variant='outline'
+              className='inline-flex items-center gap-x-1'>
+              <targetCategory.icon size={14} />
+              <span>{targetCategory.label}</span>
+            </Badge>
+          </div>
           <DropdownMenu
             open={dropdownOpen}
             onOpenChange={setDropdownOpen}>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger className='absolute top-6 right-6'>
               <EllipsisIcon className='size-4' />
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent align='end'>
               <DropdownMenuItem onSelect={handleOpenDialog}>
                 <EditIcon className='size-4 ' />
                 編輯
               </DropdownMenuItem>
-
               <DropdownMenuItem onSelect={handleOpenAlertDialog}>
                 <TrashIcon className='size-4' />
                 刪除
@@ -85,28 +108,16 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
           </DropdownMenu>
         </CardHeader>
         <CardContent className='flex-grow'>
-          <div className='flex flex-col space-y-4'>
-            <div className='flex flex-wrap mt-2 items-center gap-2 justify-between'>
-              <span className='text-sm group-ara text-muted-foreground'>
-                {formatDate(new Date(expense.dueDate), 'MM/dd')}
-              </span>
-              <Badge variant='outline'>{expense.category}</Badge>
-            </div>
+          <div className='flex flex-col space-y-3'>
             <div className='flex justify-between items-center gap-2 flex-wrap'>
               <Badge
                 variant='outline'
-                className={`text-xs ${
-                  expense.frequency === Types.Frequency.ONE_TIME
-                    ? 'bg-blue-100 text-blue-800'
-                    : expense.frequency === Types.Frequency.WEEKLY
-                    ? 'bg-green-100 text-green-800'
-                    : expense.frequency === Types.Frequency.MONTHLY
-                    ? 'bg-purple-100 text-purple-800'
-                    : 'bg-gray-100 text-gray-800'
-                }`}>
-                {expense.frequency}
+                className={`text-xs ${frequencyColor}`}>
+                {frequency[expense.frequency]}
               </Badge>
-              <span className='text-lg font-semibold text-green-600'>${expense.amount}</span>
+              <span className={`text-lg font-medium ${amountColor}`}>
+                {currency[expense.currency].symbol} {expense.amount}
+              </span>
             </div>
             {/* <div className='flex flex-wrap gap-2 mt-2'>
                 {expense.tag.map((tag, index) => (
@@ -118,7 +129,7 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
                   </Badge>
                 ))}
               </div> */}
-            <div className='mt-4'>
+            <div>
               <p className='text-sm truncate text-muted-foreground'>{expense.description}</p>
             </div>
           </div>

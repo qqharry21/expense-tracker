@@ -21,7 +21,7 @@ import { cn, formatNumber } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { createExpense, updateExpense } from '@/actions/expense';
-import { categories, currencies, frequencies } from '@/lib';
+import { category, currency, frequency } from '@/lib';
 import { useMutation } from 'http-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -35,7 +35,7 @@ interface ExpenseFormProps {
   onError?: () => void;
 }
 
-const currencyOptions = Object.entries(currencies).map(([key, value]) => ({
+const currencyOptions = Object.entries(currency).map(([key, value]) => ({
   label: value.label,
   value: key,
 }));
@@ -166,7 +166,7 @@ export const ExpenseForm = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.entries(categories).map(([key, value]) => (
+                  {Object.entries(category).map(([key, value]) => (
                     <SelectItem
                       key={key}
                       value={key}>
@@ -198,7 +198,7 @@ export const ExpenseForm = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.entries(frequencies).map(([key, value]) => (
+                  {Object.entries(frequency).map(([key, value]) => (
                     <SelectItem
                       key={key}
                       value={key}>

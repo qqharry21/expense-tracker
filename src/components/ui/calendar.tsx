@@ -1,17 +1,33 @@
 'use client';
 
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import * as React from 'react';
-import { DayPicker } from 'react-day-picker';
+import { DayPicker, DropdownProps } from 'react-day-picker';
 
 import { buttonVariants } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { zhTW } from 'date-fns/locale';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
-function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
+function Calendar({
+  className,
+  classNames,
+  showOutsideDays = true,
+  components,
+  ...props
+}: CalendarProps) {
   return (
     <DayPicker
+      locale={zhTW}
       showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
       classNames={{
@@ -19,10 +35,11 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         month: 'space-y-4',
         caption: 'flex justify-center pt-1 relative items-center',
         caption_label: 'text-sm font-medium',
+        caption_dropdowns: 'flex items-center gap-x-2 justify-center',
         nav: 'space-x-1 flex items-center',
         nav_button: cn(
           buttonVariants({ variant: 'outline' }),
-          'size-7 bg-transparent p-0 opacity-50 hover:opacity-100 [&_svg]:size-3'
+          'size-7 bg-transparent p-0 opacity-50 hover:opacity-100'
         ),
         nav_button_previous: 'absolute left-1',
         nav_button_next: 'absolute right-1',
@@ -53,8 +70,10 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         ...classNames,
       }}
       components={{
+        ...components,
         IconLeft: ChevronLeftIcon,
         IconRight: ChevronRightIcon,
+        Dropdown: CustomMonthYearDropdown,
       }}
       {...props}
     />
@@ -62,5 +81,40 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
 }
 
 Calendar.displayName = 'Calendar';
+
+const CustomMonthYearDropdown = ({ value, onChange, children, ...props }: DropdownProps) => {
+  const options = React.Children.toArray(children) as React.ReactElement<
+    React.HTMLProps<HTMLOptionElement>
+  >[];
+  const selected = options.find((child) => child.props.value === value);
+  const handleChange = (value: string) => {
+    const changeEvent = {
+      target: { value },
+    } as React.ChangeEvent<HTMLSelectElement>;
+    onChange?.(changeEvent);
+  };
+  return (
+    <Select
+      value={value?.toString()}
+      onValueChange={(value) => {
+        handleChange(value);
+      }}>
+      <SelectTrigger className='border-none p-0 shadow-none focus:ring-0'>
+        <SelectValue>{selected?.props?.children}</SelectValue>
+      </SelectTrigger>
+      <SelectContent position='popper'>
+        <ScrollArea className='h-40'>
+          {options.map((option, id: number) => (
+            <SelectItem
+              key={`${option.props.value}-${id}`}
+              value={option.props.value?.toString() ?? ''}>
+              {option.props.children}
+            </SelectItem>
+          ))}
+        </ScrollArea>
+      </SelectContent>
+    </Select>
+  );
+};
 
 export { Calendar };

@@ -90,3 +90,7 @@
     grid-template-columns: repeat(auto-fit, minmax(min(var(--min-col-size), 100%), 1fr));
   }
 }
+
+.rdp-vhidden {
+  @apply hidden;
+}

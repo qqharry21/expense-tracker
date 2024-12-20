@@ -17,7 +17,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getLocalizeDate(date: DateArg<Date>, formatStr: string, options?: FormatOptions) {
+export function getLocalizeDate(
+  date: DateArg<Date>,
+  formatStr: string,
+  options?: FormatOptions,
+) {
   return format(date, formatStr, {
     locale: zhTW,
     ...options,
@@ -50,7 +54,10 @@ export const formatNumber = (value: string) => {
 /**
  * 取得金額與頻率的嚴重程度
  */
-export const getAmountAndFrequencyLevel = (amount: number, frequency: Types.Frequency) => {
+export const getAmountAndFrequencyLevel = (
+  amount: number,
+  frequency: Types.Frequency,
+) => {
   const [high, medium] = thresholds[frequency];
 
   if (amount > high) return Level.HIGH;
@@ -91,12 +98,14 @@ export const isExpenseOnDate = (date: Date, expense: Types.Expense) => {
 
     case 'WEEKLY':
       return (
-        !isBefore(checkDate, startDate) && checkDate.getDay() === startDate.getDay() // 同一天的星期
+        !isBefore(checkDate, startDate) &&
+        checkDate.getDay() === startDate.getDay() // 同一天的星期
       );
 
     case 'MONTHLY':
       return (
-        !isBefore(checkDate, startDate) && checkDate.getDate() === startDate.getDate() // 同一天的日期
+        !isBefore(checkDate, startDate) &&
+        checkDate.getDate() === startDate.getDate() // 同一天的日期
       );
 
     case 'ANNUALLY':

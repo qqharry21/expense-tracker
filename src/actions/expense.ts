@@ -12,7 +12,8 @@ export async function createExpense(data: any) {
     if (!session) return actionData('Unauthorized', { status: 401 });
 
     const parsed = expenseSchema.safeParse(data);
-    if (!parsed.success) return actionData(parsed.error.format(), { status: 400 });
+    if (!parsed.success)
+      return actionData(parsed.error.format(), { status: 400 });
 
     const newExpense = await prisma.expense.create({
       data: {
@@ -33,7 +34,8 @@ export async function updateExpense(data: any) {
     if (!session) return actionData('Unauthorized', { status: 401 });
 
     const parsed = expenseSchema.safeParse(data);
-    if (!parsed.success) return actionData(parsed.error.format(), { status: 400 });
+    if (!parsed.success)
+      return actionData(parsed.error.format(), { status: 400 });
 
     const { id, ...updateData } = parsed.data;
 

@@ -53,14 +53,14 @@ export async function DashboardSidebar({ expenses }: DashboardSidebarProps) {
 
   return (
     <Sidebar>
-      <SidebarHeader className='h-16 border-b border-sidebar-border'>
+      <SidebarHeader className="h-16 border-b border-sidebar-border">
         <NavUser user={session.user}>
           <SignoutButton />
         </NavUser>
       </SidebarHeader>
       <SidebarContent>
         <DashboardDatePicker expenses={expenses} />
-        <SidebarSeparator className='mx-0' />
+        <SidebarSeparator className="mx-0" />
         <DashboardCalendars calendars={data.calendars} />
       </SidebarContent>
       <SidebarFooter>

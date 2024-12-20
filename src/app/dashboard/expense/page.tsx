@@ -27,8 +27,8 @@ export default async function Page() {
   }
 
   return (
-    <div className='container mx-auto p-4'>
-      <h1 className='text-3xl font-bold mb-6'>支出列表</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="mb-6 text-3xl font-bold">支出列表</h1>
       <ExpenseHeader />
       <ExpenseCardList expenses={expenses} />
     </div>

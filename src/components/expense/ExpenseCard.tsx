@@ -2,7 +2,12 @@
 
 import { EditIcon, EllipsisIcon, Loader, TrashIcon } from 'lucide-react';
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Types } from '@/lib/types';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -37,13 +42,19 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const targetCategory = useMemo(() => category[expense.category], [expense.category]);
+  const targetCategory = useMemo(
+    () => category[expense.category],
+    [expense.category],
+  );
 
-  const frequencyColor = useMemo(() => getFrequencyColor(expense.frequency), [expense.frequency]);
+  const frequencyColor = useMemo(
+    () => getFrequencyColor(expense.frequency),
+    [expense.frequency],
+  );
 
   const amountColor = useMemo(
     () => getAmountColor(expense.amount, expense.frequency),
-    [expense.amount, expense.frequency]
+    [expense.amount, expense.frequency],
   );
 
   const handleOpenDialog = useCallback(() => {
@@ -71,48 +82,43 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
 
   return (
     <>
-      <Card className='flex flex-col'>
-        <CardHeader className='relative space-y-0 pb-3'>
-          <CardTitle
-            className='mb-3 pr-8 truncate'
-            title={expense.title}>
+      <Card className="flex flex-col">
+        <CardHeader className="relative space-y-0 pb-3">
+          <CardTitle className="mb-3 truncate pr-8" title={expense.title}>
             {expense.title}
           </CardTitle>
-          <div className='flex items-center justify-between gap-2'>
-            <span className='text-sm text-gray-500'>
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm text-gray-500">
               扣款日 - {formatDate(new Date(expense.dueDate), 'MM/dd')}
             </span>
             <Badge
-              variant='outline'
-              className='inline-flex items-center gap-x-1'>
+              variant="outline"
+              className="inline-flex items-center gap-x-1"
+            >
               <targetCategory.icon size={14} />
               <span>{targetCategory.label}</span>
             </Badge>
           </div>
-          <DropdownMenu
-            open={dropdownOpen}
-            onOpenChange={setDropdownOpen}>
-            <DropdownMenuTrigger className='absolute top-6 right-6'>
-              <EllipsisIcon className='size-4' />
+          <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+            <DropdownMenuTrigger className="absolute right-6 top-6">
+              <EllipsisIcon className="size-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
+            <DropdownMenuContent align="end">
               <DropdownMenuItem onSelect={handleOpenDialog}>
-                <EditIcon className='size-4 ' />
+                <EditIcon className="size-4" />
                 編輯
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={handleOpenAlertDialog}>
-                <TrashIcon className='size-4' />
+                <TrashIcon className="size-4" />
                 刪除
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </CardHeader>
-        <CardContent className='flex-grow'>
-          <div className='flex flex-col space-y-3'>
-            <div className='flex justify-between items-center gap-2 flex-wrap'>
-              <Badge
-                variant='outline'
-                className={`text-xs ${frequencyColor}`}>
+        <CardContent className="flex-grow">
+          <div className="flex flex-col space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Badge variant="outline" className={`text-xs ${frequencyColor}`}>
                 {frequency[expense.frequency]}
               </Badge>
               <span className={`text-lg font-medium ${amountColor}`}>
@@ -130,30 +136,28 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
                 ))}
               </div> */}
             <div>
-              <p className='text-sm truncate text-muted-foreground'>{expense.description}</p>
+              <p className="truncate text-sm text-muted-foreground">
+                {expense.description}
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
-      <Dialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>編輯支出</DialogTitle>
           </DialogHeader>
-          <div className='overflow-scroll max-h-[600px]'>
+          <div className="max-h-[600px] overflow-scroll">
             <ExpenseForm
-              mode='edit'
+              mode="edit"
               defaultValues={expense}
               onSuccess={() => setDialogOpen(false)}
             />
           </div>
         </DialogContent>
       </Dialog>
-      <AlertDialog
-        open={alertDialogOpen}
-        onOpenChange={setAlertDialogOpen}>
+      <AlertDialog open={alertDialogOpen} onOpenChange={setAlertDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>您確定要刪除這筆紀錄？</AlertDialogTitle>
@@ -163,11 +167,12 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
-            <Button
-              variant='destructive'
-              disabled={loading}
-              onClick={onDelete}>
-              {loading ? <Loader className='animate-spin' /> : <TrashIcon className='size-4' />}
+            <Button variant="destructive" disabled={loading} onClick={onDelete}>
+              {loading ? (
+                <Loader className="animate-spin" />
+              ) : (
+                <TrashIcon className="size-4" />
+              )}
               {loading ? '刪除中...' : '刪除'}
             </Button>
           </AlertDialogFooter>

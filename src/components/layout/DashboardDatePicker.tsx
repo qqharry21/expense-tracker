@@ -10,7 +10,11 @@ import { cn, isExpenseOnDate } from '@/lib/utils';
 import { SidebarGroup, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '../ui/hover-card';
 
 interface DashboardDatePickerProps {
   expenses: Types.Expense[];
@@ -22,17 +26,18 @@ export function DashboardDatePicker({ expenses }: DashboardDatePickerProps) {
   const [selectedMonth, setSelectedMonth] = useState<Date>(today);
 
   const getExpensesForDate = useCallback(
-    (date: Date) => expenses.filter((expense) => isExpenseOnDate(date, expense)),
-    [expenses]
+    (date: Date) =>
+      expenses.filter((expense) => isExpenseOnDate(date, expense)),
+    [expenses],
   );
 
   return (
-    <SidebarGroup className='px-0'>
+    <SidebarGroup className="px-0">
       <SidebarGroupContent>
         <Calendar
-          mode='single'
+          mode="single"
           required
-          captionLayout='dropdown'
+          captionLayout="dropdown"
           showOutsideDays={false}
           selected={selectedDate}
           month={selectedMonth}
@@ -40,7 +45,7 @@ export function DashboardDatePicker({ expenses }: DashboardDatePickerProps) {
           endMonth={new Date(2050, 11)}
           onSelect={setSelectedDate}
           onMonthChange={setSelectedMonth}
-          className='[&_[role=gridcell]]:w-[33px] [&_th]:w-[33px]'
+          className="[&_[role=gridcell]]:w-[33px] [&_th]:w-[33px]"
           classNames={{}}
           modifiers={{
             marked: (date) => getExpensesForDate(date).length > 0,
@@ -62,15 +67,16 @@ export function DashboardDatePicker({ expenses }: DashboardDatePickerProps) {
           }}
         />
         {!isSameMonth(today, selectedMonth) && (
-          <div className='flex justify-center'>
+          <div className="flex justify-center">
             <Button
-              size='sm'
-              variant='link'
-              className='hover:no-underline'
+              size="sm"
+              variant="link"
+              className="hover:no-underline"
               onClick={() => {
                 setSelectedMonth(today);
                 setSelectedDate(today);
-              }}>
+              }}
+            >
               今天
             </Button>
           </div>
@@ -93,31 +99,33 @@ const CustomDayButton = ({
 }: CustomDayContentProps) => {
   return (
     <button
-      className={cn('flex justify-center w-full h-full items-center relative', className)}
-      {...props}>
+      className={cn(
+        'relative flex h-full w-full items-center justify-center',
+        className,
+      )}
+      {...props}
+    >
       <span>{format(day.date, 'd')}</span>
-      <div className='absolute bottom-[2.5px] flex items-center justify-center gap-x-0.5'>
+      <div className="absolute bottom-[2.5px] flex items-center justify-center gap-x-0.5">
         {existExpenses.slice(0, 3).map((expense, index) => (
           <div
             key={`expense-${expense.id}-${index}`}
-            className='size-[5px] rounded-full bg-primary border border-primary group-aria-selected:bg-primary-foreground transition-colors ease-in-out duration-200'
+            className="size-[5px] rounded-full border border-primary bg-primary transition-colors duration-200 ease-in-out group-aria-selected:bg-primary-foreground"
           />
         ))}
       </div>
-      <HoverCard
-        openDelay={500}
-        closeDelay={0}>
+      <HoverCard openDelay={500} closeDelay={0}>
         <HoverCardTrigger asChild>
-          <div className='absolute w-full h-full left-0 top-0'></div>
+          <div className="absolute left-0 top-0 h-full w-full"></div>
         </HoverCardTrigger>
         {existExpenses.length > 0 && (
-          <HoverCardContent className='w-fit flex flex-col gap-2'>
+          <HoverCardContent className="flex w-fit flex-col gap-2">
             {existExpenses.map((expense) => (
-              <div
-                key={expense.id}
-                className='flex items-center gap-2'>
-                <span className='text-sm'>{expense.title}</span>
-                <span className='text-sm text-primary'>{expense.amount.toLocaleString()}</span>
+              <div key={expense.id} className="flex items-center gap-2">
+                <span className="text-sm">{expense.title}</span>
+                <span className="text-sm text-primary">
+                  {expense.amount.toLocaleString()}
+                </span>
               </div>
             ))}
           </HoverCardContent>

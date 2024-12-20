@@ -19,13 +19,13 @@ export const CurrencySelectInput = ({
   return (
     <SelectInput
       {...props}
-      type='number'
-      placeholder='輸入金額'
+      type="number"
+      placeholder="輸入金額"
       selectOptions={currencyOptions}
-      selectPlaceholder='請選擇'
+      selectPlaceholder="請選擇"
       onBlur={onBlur}
       prefix={
-        <span className='text-gray-500 text-sm'>
+        <span className="text-sm text-gray-500">
           {currency[props.selectedOption as keyof typeof currency].symbol}
         </span>
       }

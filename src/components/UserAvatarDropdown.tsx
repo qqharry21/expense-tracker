@@ -20,34 +20,24 @@ export function UserAvatarDropdown({ user }: UserAvatarDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant='ghost'
-          className='relative h-8 w-8 rounded-full'>
-          <Avatar className='h-8 w-8'>
-            <AvatarImage
-              src={user.image ?? ''}
-              alt={user.name ?? ''}
-            />
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={user.image ?? ''} alt={user.name ?? ''} />
             <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className='w-56'
-        align='end'
-        forceMount>
-        <div className='flex items-center justify-start gap-2 p-2'>
-          <div className='flex flex-col space-y-1 leading-none'>
-            <p className='font-medium'>{user.name}</p>
-            <p className='text-sm text-muted-foreground'>{user.email}</p>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <div className="flex items-center justify-start gap-2 p-2">
+          <div className="flex flex-col space-y-1 leading-none">
+            <p className="font-medium">{user.name}</p>
+            <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link
-            href='/dashboard'
-            className='flex items-center'>
-            <UserIcon className='h-4 w-4' />
+          <Link href="/dashboard" className="flex items-center">
+            <UserIcon className="h-4 w-4" />
             <span>前往後台頁面</span>
           </Link>
         </DropdownMenuItem>

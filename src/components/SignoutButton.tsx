@@ -8,12 +8,11 @@ export const SignoutButton = () => {
       action={async () => {
         'use server';
         await signOut();
-      }}>
+      }}
+    >
       <DropdownMenuItem asChild>
-        <button
-          type='submit'
-          className='w-full'>
-          <LogOut className='h-4 w-4' />
+        <button type="submit" className="w-full">
+          <LogOut className="h-4 w-4" />
           <span>登出</span>
         </button>
       </DropdownMenuItem>

@@ -7,8 +7,9 @@ export const SigninButton = () => {
       action={async () => {
         'use server';
         await signIn('google', { redirectTo: '/dashboard' });
-      }}>
-      <Button className='text-base font-medium'>登入/註冊</Button>
+      }}
+    >
+      <Button className="text-base font-medium">登入/註冊</Button>
     </form>
   );
 };

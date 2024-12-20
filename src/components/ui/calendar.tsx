@@ -1,6 +1,5 @@
 'use client';
 
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import * as React from 'react';
 import { DayPicker, DropdownProps } from 'react-day-picker';
 
@@ -15,6 +14,7 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { zhTW } from 'date-fns/locale';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -31,49 +31,57 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
       classNames={{
-        months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'space-y-4',
-        caption: 'flex justify-center pt-1 relative items-center',
+        months: 'flex flex-col sm:flex-row space-y-4 sm:space-y-0 relative',
+        month_caption: 'flex justify-center relative items-center',
+        month_grid: 'w-full border-collapse space-y-1',
         caption_label: 'text-sm font-medium',
-        caption_dropdowns: 'flex items-center gap-x-2 justify-center',
-        nav: 'space-x-1 flex items-center',
-        nav_button: cn(
+        nav: 'flex items-center justify-between absolute inset-x-0',
+        dropdowns: 'flex items-center justify-center gap-x-2',
+        button_previous: cn(
           buttonVariants({ variant: 'outline' }),
-          'size-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 z-10'
         ),
-        nav_button_previous: 'absolute left-1',
-        nav_button_next: 'absolute right-1',
-        table: 'w-full border-collapse space-y-1',
-        head_row: 'flex',
-        head_cell: 'text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]',
-        row: 'flex w-full mt-2',
-        cell: cn(
-          'relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-end)]:rounded-r-md',
-          props.mode === 'range'
-            ? '[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md'
-            : '[&:has([aria-selected])]:rounded-md'
+        button_next: cn(
+          buttonVariants({ variant: 'outline' }),
+          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 z-10'
         ),
+        weeks: 'w-full border-collapse space-y-',
+        weekdays: 'flex',
+        weekday: 'text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]',
+        week: 'flex w-full mt-2',
+        day_button:
+          'size-8 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
         day: cn(
           buttonVariants({ variant: 'ghost' }),
-          'size-8 p-0 group font-normal aria-selected:opacity-100'
+          'size-8 p-0 font-normal group aria-selected:opacity-100'
         ),
-        day_range_start: 'day-range-start',
-        day_range_end: 'day-range-end',
-        day_selected:
+        range_end: 'day-range-end',
+        selected:
           'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
-        day_today: 'bg-accent text-accent-foreground',
-        day_outside:
-          'day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground',
-        day_disabled: 'text-muted-foreground opacity-50',
-        day_range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
-        day_hidden: 'invisible',
+        today: 'bg-accent text-accent-foreground',
+        outside:
+          'day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
+        disabled: 'text-muted-foreground opacity-50',
+        range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
+        hidden: 'invisible',
         ...classNames,
       }}
       components={{
         ...components,
-        IconLeft: ChevronLeftIcon,
-        IconRight: ChevronRightIcon,
         Dropdown: CustomMonthYearDropdown,
+        Chevron: ({ ...props }) =>
+          props.orientation === 'left' ? (
+            <ChevronLeftIcon
+              {...props}
+              className='size-4'
+            />
+          ) : (
+            <ChevronRightIcon
+              {...props}
+              className='size-4'
+            />
+          ),
       }}
       {...props}
     />
@@ -82,11 +90,11 @@ function Calendar({
 
 Calendar.displayName = 'Calendar';
 
-const CustomMonthYearDropdown = ({ value, onChange, children, ...props }: DropdownProps) => {
-  const options = React.Children.toArray(children) as React.ReactElement<
-    React.HTMLProps<HTMLOptionElement>
-  >[];
-  const selected = options.find((child) => child.props.value === value);
+const CustomMonthYearDropdown = ({ value, onChange, options, ...props }: DropdownProps) => {
+  const selected = React.useMemo(
+    () => options?.find((option) => option.value === value),
+    [value, options]
+  );
   const handleChange = (value: string) => {
     const changeEvent = {
       target: { value },
@@ -99,16 +107,19 @@ const CustomMonthYearDropdown = ({ value, onChange, children, ...props }: Dropdo
       onValueChange={(value) => {
         handleChange(value);
       }}>
-      <SelectTrigger className='border-none p-0 shadow-none focus:ring-0'>
-        <SelectValue>{selected?.props?.children}</SelectValue>
+      <SelectTrigger
+        className='h-7 border-none p-0 shadow-none focus:ring-0'
+        aria-label={props['aria-label']}
+        disabled={props.disabled}>
+        <SelectValue>{selected?.label}</SelectValue>
       </SelectTrigger>
       <SelectContent position='popper'>
         <ScrollArea className='h-40'>
-          {options.map((option, id: number) => (
+          {options?.map((option, id: number) => (
             <SelectItem
-              key={`${option.props.value}-${id}`}
-              value={option.props.value?.toString() ?? ''}>
-              {option.props.children}
+              key={`${option.value}-${id}`}
+              value={option.value?.toString() ?? ''}>
+              {option.label}
             </SelectItem>
           ))}
         </ScrollArea>

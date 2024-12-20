@@ -1,11 +1,27 @@
 import { clsx, type ClassValue } from 'clsx';
-import { formatDate, isBefore, isSameDay, startOfDay } from 'date-fns';
+import {
+  DateArg,
+  format,
+  formatDate,
+  FormatOptions,
+  isBefore,
+  isSameDay,
+  startOfDay,
+} from 'date-fns';
+import { zhTW } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
 import { Level, thresholds } from '.';
 import { Types } from './types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function getLocalizeDate(date: DateArg<Date>, formatStr: string, options?: FormatOptions) {
+  return format(date, formatStr, {
+    locale: zhTW,
+    ...options,
+  });
 }
 
 export function getCurrentDate(format: string = 'yyyy-MM-dd') {

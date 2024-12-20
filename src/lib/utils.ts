@@ -1,5 +1,5 @@
 import { clsx, type ClassValue } from 'clsx';
-import { formatDate } from 'date-fns';
+import { formatDate, isBefore, isSameDay, startOfDay } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import { Level, thresholds } from '.';
 import { Types } from './types';
@@ -59,4 +59,38 @@ export const getAmountColor = (amount: number, frequency: Types.Frequency) => {
   if (level === Level.HIGH) return 'text-red-500';
   if (level === Level.MEDIUM) return 'text-yellow-500';
   return 'text-green-500';
+};
+
+export const isExpenseOnDate = (date: Date, expense: Types.Expense) => {
+  const { dueDate, frequency } = expense;
+  const startDate = startOfDay(dueDate);
+  const checkDate = startOfDay(date);
+
+  switch (frequency) {
+    case 'ONE_TIME':
+      return isSameDay(startDate, checkDate);
+
+    case 'DAILY':
+      return !isBefore(checkDate, startDate);
+
+    case 'WEEKLY':
+      return (
+        !isBefore(checkDate, startDate) && checkDate.getDay() === startDate.getDay() // 同一天的星期
+      );
+
+    case 'MONTHLY':
+      return (
+        !isBefore(checkDate, startDate) && checkDate.getDate() === startDate.getDate() // 同一天的日期
+      );
+
+    case 'ANNUALLY':
+      return (
+        !isBefore(checkDate, startDate) &&
+        checkDate.getDate() === startDate.getDate() &&
+        checkDate.getMonth() === startDate.getMonth() // 同一天的月和日
+      );
+
+    default:
+      return false;
+  }
 };

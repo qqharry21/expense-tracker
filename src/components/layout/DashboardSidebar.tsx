@@ -16,6 +16,7 @@ import {
 import { Types } from '@/lib/types';
 import { SignoutButton } from '../SignoutButton';
 import { DashboardCalendars } from './DashboardCalendars';
+import { DashboardDatePicker } from './DashboardDatePicker';
 
 // This is sample data.
 const data = {
@@ -48,8 +49,8 @@ export async function DashboardSidebar({ expenses }: DashboardSidebarProps) {
   const session = await auth();
   if (!session?.user) {
     return;
-    // redirect('/');
   }
+
   return (
     <Sidebar>
       <SidebarHeader className='h-16 border-b border-sidebar-border'>
@@ -58,7 +59,7 @@ export async function DashboardSidebar({ expenses }: DashboardSidebarProps) {
         </NavUser>
       </SidebarHeader>
       <SidebarContent>
-        {/* <DashboardDatePicker expenses={expenses} /> */}
+        <DashboardDatePicker expenses={expenses} />
         <SidebarSeparator className='mx-0' />
         <DashboardCalendars calendars={data.calendars} />
       </SidebarContent>

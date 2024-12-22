@@ -59,6 +59,7 @@ export const ExpenseForm = ({
     amount: 500,
     frequency: Types.Frequency.MONTHLY,
     description: '',
+    includeEndTime: false,
   },
   onSuccess,
   onError,
@@ -121,15 +122,15 @@ export const ExpenseForm = ({
           control={form.control}
           render={({ field }) => (
             <FormItem className="col-span-2">
-              <FormLabel>扣款日期</FormLabel>
-              <div className="flex items-center justify-center gap-x-4">
+              <FormLabel>開始日期</FormLabel>
+              <div className="grid grid-cols-6 gap-x-4">
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
                         variant="outline"
                         className={cn(
-                          'w-full justify-start truncate text-left font-normal',
+                          'col-span-4 w-full justify-start truncate text-left font-normal',
                           !field.value && 'text-muted-foreground',
                         )}
                         id="startTime"
@@ -151,19 +152,23 @@ export const ExpenseForm = ({
                   </PopoverContent>
                 </Popover>
 
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="hasEndTime"
-                    checked={hasEndTime}
-                    onCheckedChange={setHasEndTime}
-                    disabled={currentFrequency === Types.Frequency.ONE_TIME}
-                  />
+                <div className="col-span-2 flex items-center justify-end space-x-2">
                   <Label
                     htmlFor="hasEndTime"
                     className="whitespace-nowrap text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
                   >
-                    截止日期
+                    截止日
                   </Label>
+                  <Switch
+                    id="hasEndTime"
+                    checked={hasEndTime}
+                    onCheckedChange={(value) => {
+                      setHasEndTime(value);
+                      form.setValue('endTime', null);
+                      form.setValue('includeEndTime', false);
+                    }}
+                    disabled={currentFrequency === Types.Frequency.ONE_TIME}
+                  />
                 </div>
               </div>
               <FormMessage />
@@ -177,33 +182,54 @@ export const ExpenseForm = ({
             render={({ field }) => (
               <FormItem className="col-span-2">
                 <FormLabel>截止日期</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'w-full justify-start truncate text-left font-normal',
-                          !field.value && 'text-muted-foreground',
-                        )}
-                        id="endTime"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value
-                          ? format(field.value, 'yyyy-MM-dd')
-                          : '選擇日期'}
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value ?? new Date()}
-                      onSelect={field.onChange}
-                      className="mx-auto w-full max-w-[280px]"
-                    />
-                  </PopoverContent>
-                </Popover>
+                <div className="grid grid-cols-6 gap-x-4">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'col-span-4 w-full justify-start truncate text-left font-normal',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                          id="endTime"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value
+                            ? format(field.value, 'yyyy-MM-dd')
+                            : '選擇日期'}
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value ?? new Date()}
+                        onSelect={field.onChange}
+                        className="mx-auto w-full max-w-[280px]"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormField
+                    name="includeEndTime"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem className="col-span-2 flex items-center justify-end space-x-2 space-y-0">
+                        <FormLabel className="whitespace-nowrap text-sm font-normal">
+                          包含截止日
+                        </FormLabel>
+                        <FormControl>
+                          <Switch
+                            id="includeEndTime"
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -249,6 +275,7 @@ export const ExpenseForm = ({
                   if (value === Types.Frequency.ONE_TIME) {
                     setHasEndTime(false);
                     form.setValue('endTime', null);
+                    form.setValue('includeEndTime', false);
                   }
                 }}
               >

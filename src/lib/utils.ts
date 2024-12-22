@@ -92,34 +92,45 @@ export const getAmountColor = (amount: number, frequency: Types.Frequency) => {
 };
 
 export const isExpenseOnDate = (date: Date, expense: Types.Expense) => {
-  const { startTime, frequency } = expense;
+  const { startTime, endTime, frequency, includeEndTime } = expense;
   const startDate = startOfDay(startTime);
+  const endDate = endTime ? startOfDay(endTime) : null;
+  if (includeEndTime && endDate) {
+    endDate.setDate(endDate.getDate() + 1);
+  }
   const checkDate = startOfDay(date);
 
   switch (frequency) {
-    case 'ONE_TIME':
+    case Types.Frequency.ONE_TIME:
       return isSameDay(startDate, checkDate);
 
-    case 'DAILY':
-      return !isBefore(checkDate, startDate);
-
-    case 'WEEKLY':
+    case Types.Frequency.DAILY:
       return (
         !isBefore(checkDate, startDate) &&
-        checkDate.getDay() === startDate.getDay() // 同一天的星期
+        // 如果包含結束時間，則需檢查是否在結束時間當天
+        (!endDate || isBefore(checkDate, endDate))
       );
 
-    case 'MONTHLY':
+    case Types.Frequency.WEEKLY:
       return (
         !isBefore(checkDate, startDate) &&
-        checkDate.getDate() === startDate.getDate() // 同一天的日期
+        checkDate.getDay() === startDate.getDay() && // 同一天的星期
+        (!endDate || isBefore(checkDate, endDate))
       );
 
-    case 'ANNUALLY':
+    case Types.Frequency.MONTHLY:
+      return (
+        !isBefore(checkDate, startDate) &&
+        checkDate.getDate() === startDate.getDate() && // 同一天的日期
+        (!endDate || isBefore(checkDate, endDate))
+      );
+
+    case Types.Frequency.ANNUALLY:
       return (
         !isBefore(checkDate, startDate) &&
         checkDate.getDate() === startDate.getDate() &&
-        checkDate.getMonth() === startDate.getMonth() // 同一天的月和日
+        checkDate.getMonth() === startDate.getMonth() && // 同一天的月和日
+        (!endDate || isBefore(checkDate, endDate))
       );
 
     default:

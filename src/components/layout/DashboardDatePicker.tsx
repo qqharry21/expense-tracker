@@ -46,7 +46,6 @@ export function DashboardDatePicker({ expenses }: DashboardDatePickerProps) {
           onSelect={setSelectedDate}
           onMonthChange={setSelectedMonth}
           className="[&_[role=gridcell]]:w-[33px] [&_th]:w-[33px]"
-          classNames={{}}
           modifiers={{
             marked: (date) => getExpensesForDate(date).length > 0,
           }}

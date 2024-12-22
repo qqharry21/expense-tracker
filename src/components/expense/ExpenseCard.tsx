@@ -91,7 +91,7 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
             <span className="text-sm text-gray-500">
               {formatDate(new Date(expense.startTime), 'MM/dd')}{' '}
               {expense.endTime &&
-                `- ${formatDate(new Date(expense.endTime), 'MM/dd')}`}
+                `- ${formatDate(new Date(expense.endTime), 'MM/dd')} ${expense.includeEndTime ? '（含）' : ''}`}
             </span>
             <Badge
               variant="outline"

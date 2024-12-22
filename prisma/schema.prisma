@@ -119,20 +119,21 @@ enum GoalStatus {
 }
 
 model Expense {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  category    Category
-  currency    Currency
-  amount      Float
-  frequency   Frequency
-  description String
-  startTime   DateTime
-  endTime     DateTime?
-  userId      String       @db.ObjectId
-  user        User         @relation(fields: [userId], references: [id])
-  tags        ExpenseTag[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  category       Category
+  currency       Currency
+  amount         Float
+  frequency      Frequency
+  description    String
+  startTime      DateTime
+  endTime        DateTime?
+  includeEndTime Boolean
+  userId         String       @db.ObjectId
+  user           User         @relation(fields: [userId], references: [id])
+  tags           ExpenseTag[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model Tag {

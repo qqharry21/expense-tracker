@@ -92,8 +92,8 @@ export const getAmountColor = (amount: number, frequency: Types.Frequency) => {
 };
 
 export const isExpenseOnDate = (date: Date, expense: Types.Expense) => {
-  const { dueDate, frequency } = expense;
-  const startDate = startOfDay(dueDate);
+  const { startTime, frequency } = expense;
+  const startDate = startOfDay(startTime);
   const checkDate = startOfDay(date);
 
   switch (frequency) {

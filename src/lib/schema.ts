@@ -9,7 +9,8 @@ export const expenseSchema = z.object({
       message: 'Title is required',
     })
     .max(255),
-  dueDate: z.date(),
+  startTime: z.date(),
+  endTime: z.date().optional(),
   currency: z.nativeEnum(Types.Currency),
   category: z.nativeEnum(Types.Category),
   amount: z.number().min(1).max(500000),

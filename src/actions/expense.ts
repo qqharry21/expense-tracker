@@ -24,6 +24,7 @@ export async function createExpense(data: any) {
     revalidatePath('/dashboard/expense');
     return actionData(newExpense, { status: 201 });
   } catch (error) {
+    console.log('🚨 - error', error);
     return actionData(error, { status: 500 });
   }
 }

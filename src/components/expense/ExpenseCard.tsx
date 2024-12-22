@@ -89,7 +89,9 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
           </CardTitle>
           <div className="flex items-center justify-between gap-2">
             <span className="text-sm text-gray-500">
-              扣款日 - {formatDate(new Date(expense.dueDate), 'MM/dd')}
+              {formatDate(new Date(expense.startTime), 'MM/dd')}{' '}
+              {expense.endTime &&
+                `- ${formatDate(new Date(expense.endTime), 'MM/dd')}`}
             </span>
             <Badge
               variant="outline"

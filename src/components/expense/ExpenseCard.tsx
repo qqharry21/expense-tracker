@@ -30,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { category, currency, frequency } from '@/lib';
-import { getAmountColor, getFrequencyColor } from '@/lib/utils';
+import { cn, getAmountColor, getFrequencyColor } from '@/lib/utils';
 import { formatDate } from 'date-fns';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
@@ -118,10 +118,13 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
         <CardContent className="flex-grow">
           <div className="flex flex-col space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <Badge variant="outline" className={`text-xs ${frequencyColor}`}>
+              <Badge
+                variant="outline"
+                className={cn(`text-xs ${frequencyColor}`)}
+              >
                 {frequency[expense.frequency]}
               </Badge>
-              <span className={`text-lg font-medium ${amountColor}`}>
+              <span className={cn(`text-lg font-medium ${amountColor}`)}>
                 {currency[expense.currency].symbol} {expense.amount}
               </span>
             </div>
@@ -148,7 +151,7 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
           <DialogHeader>
             <DialogTitle>編輯支出</DialogTitle>
           </DialogHeader>
-          <div className="max-h-[600px] overflow-scroll">
+          <div className="max-h-[600px] overflow-auto">
             <ExpenseForm
               mode="edit"
               defaultValues={expense}

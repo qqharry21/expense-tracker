@@ -51,6 +51,10 @@ export const formatNumber = (value: string) => {
   return num;
 };
 
+export const formatNumberWithCommas = (num: number): string => {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
 /**
  * 取得金額與頻率的嚴重程度
  */
@@ -77,11 +81,14 @@ export const getFrequencyColor = (frequency: Types.Frequency) => {
 };
 
 export const getAmountColor = (amount: number, frequency: Types.Frequency) => {
+  const levelColor = {
+    [Level.HIGH]: 'text-red-500',
+    [Level.MEDIUM]: 'text-yellow-500',
+    [Level.LOW]: 'text-green-500',
+  };
   const level = getAmountAndFrequencyLevel(amount, frequency);
 
-  if (level === Level.HIGH) return 'text-red-500';
-  if (level === Level.MEDIUM) return 'text-yellow-500';
-  return 'text-green-500';
+  return levelColor[level];
 };
 
 export const isExpenseOnDate = (date: Date, expense: Types.Expense) => {

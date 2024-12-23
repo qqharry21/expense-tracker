@@ -29,8 +29,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { category, currency, frequency } from '@/lib';
-import { cn, getAmountColor, getFrequencyColor } from '@/lib/utils';
+import { category, currency, frequency, Level } from '@/lib';
+import { cn, getAmountAndFrequencyLevel, getFrequencyColor } from '@/lib/utils';
 import { formatDate } from 'date-fns';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
@@ -52,8 +52,8 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
     [expense.frequency],
   );
 
-  const amountColor = useMemo(
-    () => getAmountColor(expense.amount, expense.frequency),
+  const level = useMemo(
+    () => getAmountAndFrequencyLevel(expense.amount, expense.frequency),
     [expense.amount, expense.frequency],
   );
 
@@ -126,7 +126,13 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
               >
                 {frequency[expense.frequency]}
               </Badge>
-              <span className={cn(`text-lg font-medium ${amountColor}`)}>
+              <span
+                className={cn(`text-lg font-medium`, {
+                  'text-red-500': level === Level.HIGH,
+                  'text-yellow-500': level === Level.MEDIUM,
+                  'text-green-500': level === Level.LOW,
+                })}
+              >
                 {currency[expense.currency].symbol} {expense.amount}
               </span>
             </div>

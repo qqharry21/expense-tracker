@@ -6,11 +6,19 @@ import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 
 export default async function Layout({ children }: PropsWithChildren) {
-  const expenses = (await prisma.expense.findMany({})).reverse();
   const session = await auth();
   if (!session?.user) {
     redirect('/');
   }
+
+  const expenses = (
+    await prisma.expense.findMany({
+      where: {
+        userId: session?.user?.id,
+      },
+      orderBy: [{ amount: 'desc' }, { frequency: 'asc' }],
+    })
+  ).reverse();
 
   return (
     <SidebarProvider>

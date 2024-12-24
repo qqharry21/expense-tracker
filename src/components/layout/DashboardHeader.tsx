@@ -11,14 +11,13 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { routes } from '@/lib/routes';
+import { routeMap } from '@/lib/routes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 export const DashboardHeader = () => {
   const paths = usePathname();
   const pathNames = paths.split('/').filter((path) => path);
-  console.log('🚨 - pathNames', pathNames);
 
   return (
     <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-white px-4 dark:bg-gray-950">
@@ -49,7 +48,7 @@ export const DashboardHeader = () => {
           ) : (
             pathNames.map((path, index, arr) => (
               <DashboardBreadcrumbItem
-                key={index}
+                key={path}
                 path={path}
                 index={index}
                 isLast={index === arr.length - 1}
@@ -72,13 +71,14 @@ const DashboardBreadcrumbItem = ({
   isLast: boolean;
 }) => {
   const href = `/${path}`;
-  const title = routes.find((route) => route.value === path)?.name ?? '';
+  const targetRoute = routeMap.get(path);
+  const title = targetRoute?.name ?? '';
 
   return (
     <>
       {index !== 0 && <BreadcrumbSeparator />}
       <BreadcrumbItem>
-        {isLast ? (
+        {isLast || targetRoute?.url === '#' ? (
           <BreadcrumbPage>{title}</BreadcrumbPage>
         ) : (
           <BreadcrumbLink asChild>

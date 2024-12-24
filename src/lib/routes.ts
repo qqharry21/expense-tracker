@@ -10,7 +10,7 @@ import {
   TagsIcon,
 } from 'lucide-react';
 
-interface Route {
+export interface Route {
   name: string;
   value: string;
   url: string;
@@ -64,20 +64,20 @@ export const routes: Route[] = [
     ],
   },
   {
-    name: '財務目標',
+    name: '財務計畫',
     url: '#',
     value: 'financial-goals',
     icon: FlagIcon,
     subRoutes: [
       {
         name: '短期目標',
-        url: '/dashboard/short-term-goals',
+        url: '/dashboard/financial-goals/short-term-goals',
         value: 'short-term-goals',
         icon: null,
       },
       {
         name: '長期目標',
-        url: '/dashboard/long-term-goals',
+        url: '/dashboard/financial-goals/long-term-goals',
         value: 'long-term-goals',
         icon: null,
       },
@@ -110,6 +110,29 @@ export const routes: Route[] = [
     ],
   },
 ];
+
+const flattenRoutes = (routes: Route[]): Route[] => {
+  return routes.flatMap((route) => {
+    if (route.subRoutes) {
+      const { subRoutes, ...mainRoute } = route;
+      return [mainRoute, ...flattenRoutes(subRoutes)];
+    }
+    return [route];
+  });
+};
+
+export const routeMap: Map<string, { name: string; url: string }> = (() => {
+  const flat = flattenRoutes(routes);
+  return new Map(
+    flat.map((route) => [
+      route.value,
+      {
+        name: route.name,
+        url: route.url,
+      },
+    ]),
+  );
+})();
 
 export const ROOT = '/';
 export const PUBLIC_ROUTES = [ROOT, '/api', '/api/auth/callback/google'];

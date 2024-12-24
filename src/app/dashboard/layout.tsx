@@ -2,7 +2,6 @@ import { auth } from '@/auth';
 import { DashboardHeader } from '@/components/layout/DashboardHeader';
 import { DashboardSidebar } from '@/components/layout/DashboardSidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 
 export default async function Layout({ children }: PropsWithChildren) {
@@ -11,18 +10,9 @@ export default async function Layout({ children }: PropsWithChildren) {
     redirect('/');
   }
 
-  const expenses = (
-    await prisma.expense.findMany({
-      where: {
-        userId: session?.user?.id,
-      },
-      orderBy: [{ amount: 'desc' }, { frequency: 'asc' }],
-    })
-  ).reverse();
-
   return (
     <SidebarProvider>
-      <DashboardSidebar expenses={expenses} user={session.user} />
+      <DashboardSidebar user={session.user} />
       <SidebarInset>
         <DashboardHeader />
         <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>

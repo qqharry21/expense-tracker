@@ -7,44 +7,25 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
-import { Types } from '@/lib/types';
+import { prisma } from '@/lib/prisma';
 import { User } from 'next-auth';
 import { NavMain } from '../NavMain';
 import { SignoutButton } from '../SignoutButton';
 import { DashboardDatePicker } from './DashboardDatePicker';
 
-// This is sample data.
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
-  calendars: [
-    {
-      name: 'My Calendars',
-      items: ['Personal', 'Work', 'Family'],
-    },
-    {
-      name: 'Favorites',
-      items: ['Holidays', 'Birthdays'],
-    },
-    {
-      name: 'Other',
-      items: ['Travel', 'Reminders', 'Deadlines'],
-    },
-  ],
-};
-
 interface DashboardSidebarProps {
-  expenses: Types.Expense[];
   user: User;
 }
 
-export async function DashboardSidebar({
-  expenses,
-  user,
-}: DashboardSidebarProps) {
+export async function DashboardSidebar({ user }: DashboardSidebarProps) {
+  const userId = user.id;
+  const expenses = (
+    await prisma.expense.findMany({
+      where: { userId },
+      orderBy: [{ amount: 'desc' }, { frequency: 'asc' }],
+    })
+  ).reverse();
+
   return (
     <Sidebar>
       <SidebarHeader className="h-16 border-b border-sidebar-border">

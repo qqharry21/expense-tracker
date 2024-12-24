@@ -27,6 +27,8 @@ export default async function Page() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-6 text-3xl font-bold">收入</h1>
+      <p>收入來源分佈 - 收入來源堆疊柱狀圖 BarChart</p>
+      <p>總收入趨勢 - 總收入折線圖 LineChart</p>
     </div>
   );
 }

@@ -137,3 +137,28 @@ export const isExpenseOnDate = (date: Date, expense: Types.Expense) => {
       return false;
   }
 };
+
+export const getSixMonthStartEndDate = () => {
+  const currentDate = new Date();
+  const sixMonthsAgo = currentDate.setMonth(currentDate.getMonth() - 5);
+  const startMonth = getLocalizeDate(sixMonthsAgo, 'MMM');
+  const startYear = getLocalizeDate(sixMonthsAgo, 'yyyy');
+  const endMonth = getLocalizeDate(new Date(), 'MMM');
+  const endYear = getLocalizeDate(new Date(), 'yyyy');
+
+  return {
+    startMonth,
+    startYear,
+    endMonth,
+    endYear,
+  };
+};
+
+export const getSixMonthString = () => {
+  const { startMonth, startYear, endMonth, endYear } =
+    getSixMonthStartEndDate();
+  if (startYear === endYear) {
+    return `${startYear}年 ${startMonth} - ${endMonth}`;
+  }
+  return `${startYear}年 ${startMonth} - ${endYear}年${endMonth}`;
+};

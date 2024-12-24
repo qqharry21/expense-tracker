@@ -22,7 +22,7 @@ export default async function Layout({ children }: PropsWithChildren) {
 
   return (
     <SidebarProvider>
-      <DashboardSidebar expenses={expenses} />
+      <DashboardSidebar expenses={expenses} user={session.user} />
       <SidebarInset>
         <DashboardHeader />
         <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>

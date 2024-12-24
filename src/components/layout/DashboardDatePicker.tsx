@@ -32,7 +32,7 @@ export function DashboardDatePicker({ expenses }: DashboardDatePickerProps) {
   );
 
   return (
-    <SidebarGroup className="px-0">
+    <SidebarGroup className="p-0">
       <SidebarGroupContent>
         <Calendar
           mode="single"

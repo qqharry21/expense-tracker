@@ -18,6 +18,7 @@ import { usePathname } from 'next/navigation';
 export const DashboardHeader = () => {
   const paths = usePathname();
   const pathNames = paths.split('/').filter((path) => path);
+  console.log('🚨 - pathNames', pathNames);
 
   return (
     <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-white px-4 dark:bg-gray-950">
@@ -71,22 +72,18 @@ const DashboardBreadcrumbItem = ({
   isLast: boolean;
 }) => {
   const href = `/${path}`;
-  const label = routes.find((route) => route.value === path)?.label ?? '';
+  const title = routes.find((route) => route.value === path)?.name ?? '';
 
   return (
     <>
       {index !== 0 && <BreadcrumbSeparator />}
       <BreadcrumbItem>
         {isLast ? (
-          <>
-            <BreadcrumbPage>{label}</BreadcrumbPage>
-          </>
+          <BreadcrumbPage>{title}</BreadcrumbPage>
         ) : (
-          <>
-            <BreadcrumbLink asChild>
-              <Link href={href}>{label}</Link>
-            </BreadcrumbLink>
-          </>
+          <BreadcrumbLink asChild>
+            <Link href={href}>{title}</Link>
+          </BreadcrumbLink>
         )}
       </BreadcrumbItem>
     </>

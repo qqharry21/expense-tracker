@@ -1,21 +1,16 @@
-import { Plus } from 'lucide-react';
-
-import { auth } from '@/auth';
 import { NavUser } from '@/components/NavUser';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { Types } from '@/lib/types';
+import { User } from 'next-auth';
+import { NavMain } from '../NavMain';
 import { SignoutButton } from '../SignoutButton';
-import { DashboardCalendars } from './DashboardCalendars';
 import { DashboardDatePicker } from './DashboardDatePicker';
 
 // This is sample data.
@@ -43,35 +38,26 @@ const data = {
 
 interface DashboardSidebarProps {
   expenses: Types.Expense[];
+  user: User;
 }
 
-export async function DashboardSidebar({ expenses }: DashboardSidebarProps) {
-  const session = await auth();
-  if (!session?.user) {
-    return;
-  }
-
+export async function DashboardSidebar({
+  expenses,
+  user,
+}: DashboardSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader className="h-16 border-b border-sidebar-border">
-        <NavUser user={session.user}>
+        <NavUser user={user}>
           <SignoutButton />
         </NavUser>
       </SidebarHeader>
-      <SidebarContent>
-        <DashboardDatePicker expenses={expenses} />
-        <SidebarSeparator className="mx-0" />
-        <DashboardCalendars calendars={data.calendars} />
+      <SidebarContent className="gap-0">
+        <NavMain />
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <Plus />
-              <span>New Calendar</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarFooter className="gap-0">
+        <SidebarSeparator className="mx-0" />
+        <DashboardDatePicker expenses={expenses} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

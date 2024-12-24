@@ -21,7 +21,7 @@ export async function createExpense(data: any) {
         userId: session.user?.id,
       },
     });
-    revalidatePath('/dashboard/expense');
+    revalidatePath('/dashboard/expenses');
     return actionData(newExpense, { status: 201 });
   } catch (error) {
     console.log('🚨 - error', error);
@@ -44,7 +44,7 @@ export async function updateExpense(data: any) {
       where: { id },
       data: updateData,
     });
-    revalidatePath('/dashboard/expense');
+    revalidatePath('/dashboard/expenses');
     return actionData(updatedExpense, { status: 200 });
   } catch (error) {
     return actionData(error, { status: 500 });
@@ -59,7 +59,7 @@ export async function deleteExpense(id: string) {
     const deletedExpense = await prisma.expense.delete({
       where: { id },
     });
-    revalidatePath('/dashboard/expense');
+    revalidatePath('/dashboard/expenses');
     return actionData(deletedExpense, { status: 204 });
   } catch (error) {
     return actionData(error, { status: 500 });

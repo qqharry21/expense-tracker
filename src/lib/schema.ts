@@ -40,7 +40,7 @@ export const incomeSchema = z.object({
   amount: amountSchema.max(10000000, {
     message: '金額必須介於 1 至 10,000,000 之間',
   }),
-  category: z.nativeEnum(Types.ExpenseCategory),
+  category: z.nativeEnum(Types.IncomeCategory),
   frequency: frequencySchema,
   description: descriptionSchema,
 });

@@ -1,6 +1,6 @@
 'use client';
 
-import { EyeIcon, LoaderIcon, PlusIcon } from 'lucide-react';
+import { EyeIcon, EyeOffIcon, LoaderIcon, PlusIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { Button } from '../ui/button';
@@ -35,14 +35,14 @@ export const ExpenseHeader = () => {
         <div className="inline-flex items-center justify-center gap-x-4">
           <Toggle pressed={showChart} onPressedChange={setShowChart} asChild>
             <Button type="button" variant="outline" size="sm" className="h-8">
-              <EyeIcon className="h-4 w-4" />
+              {showChart ? <EyeIcon size={16} /> : <EyeOffIcon size={16} />}
               <span className="ml-2 max-md:hidden">圖表</span>
             </Button>
           </Toggle>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button type="button" variant="default" size="sm">
-                <PlusIcon className="h-4 w-4" />
+                <PlusIcon size={16} />
                 <span className="ml-2 max-md:hidden">新增支出</span>
               </Button>
             </DialogTrigger>

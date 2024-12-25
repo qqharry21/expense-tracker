@@ -53,7 +53,7 @@ export const IncomeForm = ({
     date: new Date(),
     category: Types.IncomeCategory.SALARY,
     currency: Types.Currency.TWD,
-    amount: 500,
+    amount: 3000,
     frequency: Types.Frequency.MONTHLY,
     description: '',
   },
@@ -61,12 +61,12 @@ export const IncomeForm = ({
   onError,
 }: IncomeFormProps) => {
   const form = useForm<Types.Income>({
-    mode: 'onSubmit',
+    mode: 'onBlur',
     resolver: zodResolver(incomeSchema),
     defaultValues,
   });
 
-  console.log('form', form.getValues());
+  console.log('form', form.formState.errors);
 
   const { refresh, error, isLoading } = useMutation(
     mode === 'create' ? createIncome : createIncome,
@@ -74,11 +74,11 @@ export const IncomeForm = ({
       params: form.getValues(),
       onResolve() {
         form.reset();
-        toast.success(mode === 'create' ? '新增支出成功' : '更新支出成功');
+        toast.success(mode === 'create' ? '新增收入成功' : '更新收入成功');
         onSuccess?.();
       },
       onError() {
-        toast.error(mode === 'create' ? '新增支出失敗' : '更新支出失敗');
+        toast.error(mode === 'create' ? '新增收入失敗' : '更新收入失敗');
         onError?.();
       },
     },
@@ -116,17 +116,17 @@ export const IncomeForm = ({
           control={form.control}
           render={({ field }) => (
             <FormItem className="col-span-2">
-              <FormLabel>開始日期</FormLabel>
+              <FormLabel>日期</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
+                      type="button"
                       variant="outline"
                       className={cn(
                         'col-span-4 w-full justify-start truncate text-left font-normal',
                         !field.value && 'text-muted-foreground',
                       )}
-                      id="startTime"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {field.value
@@ -235,40 +235,7 @@ export const IncomeForm = ({
             </FormItem>
           )}
         />
-        {/* <FormField
-              name='tags'
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>標籤</FormLabel>
-                  <div className='flex flex-wrap gap-2 mb-2'>
-                    <div className='flex items-center bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded'>
-                      範例標籤
-                      <button
-                        type='button'
-                        className='ml-2 text-blue-600 hover:text-blue-800'>
-                        <XIcon size={14} />
-                      </button>
-                    </div>
-                  </div>
-                  <div className='flex'>
-                    <Input
-                      {...field}
-                      placeholder='新增標籤'
-                      onKeyDown={handleTagKeydown}
-                    />
-                    <Button
-                      type='button'
-                      variant='outline'
-                      size='icon'
-                      className='ml-2'>
-                      <PlusIcon className='h-4 w-4' />
-                    </Button>
-                  </div>
-                  <p className='text-sm text-gray-500'>按下 Enter 或點擊 + 按鈕來新增標籤</p>
-                </FormItem>
-              )}
-            /> */}
+
         <Button
           type="submit"
           className="col-span-2 w-full"
@@ -276,7 +243,7 @@ export const IncomeForm = ({
             isLoading || !form.formState.isValid || !form.formState.isDirty
           }
         >
-          {mode === 'create' ? '新增支出' : '更新支出'}
+          {mode === 'create' ? '新增收入' : '更新收入'}
         </Button>
       </form>
     </Form>

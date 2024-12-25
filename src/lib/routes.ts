@@ -92,19 +92,19 @@ export const routes: Route[] = [
       {
         name: '收入報告',
         url: '/dashboard/financial-reports/income',
-        value: 'income',
+        value: 'income-financial-reports',
         icon: null,
       },
       {
         name: '支出報告',
         url: '/dashboard/financial-reports/expenses',
-        value: 'expenses',
+        value: 'expenses-financial-reports',
         icon: null,
       },
       {
         name: '淨收入報告',
         url: '/dashboard/financial-reports/net-income',
-        value: 'net-income',
+        value: 'net-income-financial-reports',
         icon: null,
       },
     ],

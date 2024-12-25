@@ -1,8 +1,7 @@
 'use client';
 
 import { TrendingUp } from 'lucide-react';
-import { Pie, PieChart, Sector } from 'recharts';
-import { PieSectorDataItem } from 'recharts/types/polar/Pie';
+import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 import {
   Card,
@@ -18,7 +17,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { getSixMonthString } from '@/lib/utils';
 const chartData = [
   { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
   { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
@@ -53,39 +51,40 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ExpenseCategoryPieChart() {
-  const duration = getSixMonthString();
+export function ExpenseCategoryStackedBarChart() {
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="pb-0">
-        <CardTitle>支出分佈</CardTitle>
-        <CardDescription>{duration}</CardDescription>
+    <Card>
+      <CardHeader>
+        <CardTitle>當月支出類別分佈</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
-          <PieChart>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            layout="vertical"
+            margin={{
+              left: 0,
+            }}
+          >
+            <YAxis
+              dataKey="browser"
+              type="category"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) =>
+                chartConfig[value as keyof typeof chartConfig]?.label
+              }
+            />
+            <XAxis dataKey="visitors" type="number" hide />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Pie
-              data={chartData}
-              dataKey="visitors"
-              nameKey="browser"
-              innerRadius={60}
-              strokeWidth={5}
-              activeIndex={0}
-              activeShape={({
-                outerRadius = 0,
-                ...props
-              }: PieSectorDataItem) => (
-                <Sector {...props} outerRadius={outerRadius + 10} />
-              )}
-            />
-          </PieChart>
+            <Bar dataKey="visitors" layout="vertical" radius={5} />
+          </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
@@ -93,7 +92,7 @@ export function ExpenseCategoryPieChart() {
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          顯示支出類別的月度統計數據
+          Showing total visitors for the last 6 months
         </div>
       </CardFooter>
     </Card>

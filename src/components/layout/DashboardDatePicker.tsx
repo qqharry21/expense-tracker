@@ -118,7 +118,7 @@ const CustomDayButton = ({
           <div className="absolute left-0 top-0 h-full w-full"></div>
         </HoverCardTrigger>
         {existExpenses.length > 0 && (
-          <HoverCardContent className="flex w-fit flex-col gap-2">
+          <HoverCardContent className="flex w-fit flex-col gap-2" side="top">
             {existExpenses.map((expense) => (
               <div key={expense.id} className="flex items-center gap-2">
                 <span className="text-sm">{expense.title}</span>

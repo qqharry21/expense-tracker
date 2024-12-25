@@ -24,7 +24,7 @@ import { Types } from '@/lib/types';
 import { cn, formatNumber } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { createIncome } from '@/actions/income';
+import { createIncome, updateIncome } from '@/actions/income';
 import { frequency, incomeCategory } from '@/lib';
 import { useMutation } from 'http-react';
 import { useForm } from 'react-hook-form';
@@ -69,7 +69,7 @@ export const IncomeForm = ({
   console.log('form', form.formState.errors);
 
   const { refresh, error, isLoading } = useMutation(
-    mode === 'create' ? createIncome : createIncome,
+    mode === 'create' ? createIncome : updateIncome,
     {
       params: form.getValues(),
       onResolve() {

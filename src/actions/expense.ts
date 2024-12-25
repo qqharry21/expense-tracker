@@ -9,7 +9,10 @@ import { revalidatePath } from 'next/cache';
 export async function createExpense(data: any) {
   try {
     const session = await auth();
-    if (!session) return actionData('Unauthorized', { status: 401 });
+    if (!session)
+      return actionData('此帳號未授權或登入逾時，請嘗試重新登入', {
+        status: 401,
+      });
 
     const userId = session.user?.id;
 
@@ -34,16 +37,20 @@ export async function createExpense(data: any) {
 export async function updateExpense(data: any) {
   try {
     const session = await auth();
-    if (!session) return actionData('Unauthorized', { status: 401 });
+    if (!session)
+      return actionData('此帳號未授權或登入逾時，請嘗試重新登入', {
+        status: 401,
+      });
 
     const parsed = expenseSchema.safeParse(data);
     if (!parsed.success)
       return actionData(parsed.error.format(), { status: 400 });
 
+    const userId = session.user?.id;
     const { id, ...updateData } = parsed.data;
 
     const updatedExpense = await prisma.expense.update({
-      where: { id },
+      where: { id, userId },
       data: updateData,
     });
     revalidatePath('/dashboard/expenses');
@@ -56,7 +63,10 @@ export async function updateExpense(data: any) {
 export async function deleteExpense(id: string) {
   try {
     const session = await auth();
-    if (!session) return actionData('Unauthorized', { status: 401 });
+    if (!session)
+      return actionData('此帳號未授權或登入逾時，請嘗試重新登入', {
+        status: 401,
+      });
 
     const deletedExpense = await prisma.expense.delete({
       where: { id },

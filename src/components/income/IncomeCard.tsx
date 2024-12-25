@@ -11,7 +11,7 @@ import {
 import { Types } from '@/lib/types';
 import { useCallback, useMemo, useState } from 'react';
 
-import { deleteExpense } from '@/actions/expense';
+import { deleteIncome } from '@/actions/income';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -70,11 +70,11 @@ export const IncomeCard = ({ income }: { income: Types.Income }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await deleteExpense(income.id);
+      await deleteIncome(income.id);
       setAlertDialogOpen(false);
-      toast.success('刪除支出成功');
+      toast.success('刪除收入成功');
     } catch (error) {
-      toast.error('刪除支出失敗');
+      toast.error('刪除收入失敗');
     } finally {
       setLoading(false);
     }
@@ -155,7 +155,7 @@ export const IncomeCard = ({ income }: { income: Types.Income }) => {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>編輯支出</DialogTitle>
+            <DialogTitle>編輯收入</DialogTitle>
           </DialogHeader>
           <div className="max-h-[600px] overflow-auto">
             <IncomeForm

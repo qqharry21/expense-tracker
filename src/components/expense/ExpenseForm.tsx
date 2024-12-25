@@ -66,7 +66,7 @@ export const ExpenseForm = ({
 }: ExpenseFormProps) => {
   const [hasEndTime, setHasEndTime] = useState(false);
   const form = useForm<Types.Expense>({
-    mode: 'onBlur',
+    mode: 'onChange',
     resolver: zodResolver(expenseSchema),
     defaultValues,
   });

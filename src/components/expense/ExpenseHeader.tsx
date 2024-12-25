@@ -2,7 +2,7 @@
 
 import { EyeIcon, EyeOffIcon, LoaderIcon, PlusIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -28,12 +28,26 @@ const ExpenseCharts = dynamic(
 export const ExpenseHeader = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showChart, setShowChart] = useState(false);
+  const onShowChartChange = () => {
+    setShowChart((prev) => !prev);
+    window.localStorage.setItem('showExpenseChart', JSON.stringify(!showChart));
+  };
+
+  useEffect(() => {
+    const showExpenseChart =
+      window.localStorage.getItem('showExpenseChart') === 'true';
+    if (showExpenseChart) setShowChart(showExpenseChart);
+  }, []);
   return (
     <>
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">支出</h1>
         <div className="inline-flex items-center justify-center gap-x-4">
-          <Toggle pressed={showChart} onPressedChange={setShowChart} asChild>
+          <Toggle
+            pressed={showChart}
+            onPressedChange={onShowChartChange}
+            asChild
+          >
             <Button type="button" variant="outline" size="sm" className="h-8">
               {showChart ? <EyeIcon size={16} /> : <EyeOffIcon size={16} />}
               <span className="ml-2 max-md:hidden">圖表</span>

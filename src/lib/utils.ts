@@ -1,12 +1,16 @@
 import { clsx, type ClassValue } from 'clsx';
 import {
   DateArg,
+  endOfMonth,
+  endOfWeek,
   format,
   formatDate,
   FormatOptions,
   isBefore,
   isSameDay,
+  isSameMonth,
   startOfDay,
+  startOfWeek,
 } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
@@ -162,3 +166,40 @@ export const getSixMonthString = () => {
   }
   return `${startYear}年 ${startMonth} - ${endYear}年${endMonth}`;
 };
+
+/**
+ * 計算指定日期當月剩餘的週數（包含當前週）。
+ * @param date - 指定日期（Date 型別）
+ * @returns 當月剩餘的週數（包含當前週）
+ */
+export function getRemainingWeeksInMonth(date: Date): number {
+  // 當前週的開始與結束
+  const startOfCurrentWeek = startOfWeek(date, { weekStartsOn: 0 }); // 週日開始
+  const endOfCurrentWeek = endOfWeek(date, { weekStartsOn: 0 }); // 週六結束
+
+  // 本月的最後一天
+  const endOfCurrentMonth = endOfMonth(date);
+
+  // 檢查當前週是否整週都在本月
+  const currentWeekInMonth = isSameMonth(startOfCurrentWeek, date)
+    ? isSameMonth(endOfCurrentWeek, date)
+      ? 1 // 當前週整週都在本月
+      : 0 // 當前週部分超出本月
+    : 0;
+
+  // 計算剩餘完整週數（不含當前週）
+  let remainingWeeks = 0;
+  if (currentWeekInMonth) {
+    let nextWeekStart = startOfWeek(endOfCurrentWeek, { weekStartsOn: 0 });
+    while (nextWeekStart < endOfCurrentMonth) {
+      remainingWeeks++;
+      nextWeekStart = startOfWeek(
+        new Date(nextWeekStart.getTime() + 7 * 24 * 60 * 60 * 1000),
+        { weekStartsOn: 0 },
+      );
+    }
+  }
+
+  // 總剩餘週數
+  return currentWeekInMonth + remainingWeeks;
+}

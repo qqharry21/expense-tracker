@@ -51,12 +51,17 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ExpenseCategoryStackedBarChart() {
+interface ChartProps {
+  config: ChartConfig;
+  data: any[];
+}
+
+export function ExpenseCategoryStackedBarChart({ config, data }: ChartProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>當月支出類別分佈</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription>顯示前五大支出類別的分佈情況</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -90,9 +95,6 @@ export function ExpenseCategoryStackedBarChart() {
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
         </div>
       </CardFooter>
     </Card>

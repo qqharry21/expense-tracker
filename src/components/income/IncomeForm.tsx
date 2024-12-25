@@ -61,7 +61,7 @@ export const IncomeForm = ({
   onError,
 }: IncomeFormProps) => {
   const form = useForm<Types.Income>({
-    mode: 'onBlur',
+    mode: 'onChange',
     resolver: zodResolver(incomeSchema),
     defaultValues,
   });

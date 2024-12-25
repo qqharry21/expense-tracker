@@ -15,12 +15,18 @@ import { IncomeForm } from './IncomeForm';
 
 export const IncomeHeader = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [showChart, setShowChart] = useState(false);
+  const [showChart, setShowChart] = useState(
+    window.localStorage.getItem('showIncomeChart') === 'true' || false,
+  );
+  const onShowChartChange = () => {
+    setShowChart((prev) => !prev);
+    window.localStorage.setItem('showIncomeChart', JSON.stringify(!showChart));
+  };
   return (
     <div className="flex items-center justify-between">
       <h1 className="text-3xl font-bold">收入</h1>
       <div className="inline-flex items-center justify-center gap-x-4">
-        <Toggle pressed={showChart} onPressedChange={setShowChart} asChild>
+        <Toggle pressed={showChart} onPressedChange={onShowChartChange} asChild>
           <Button type="button" variant="outline" size="sm" className="h-8">
             {showChart ? <EyeIcon size={16} /> : <EyeOffIcon size={16} />}
             <span className="ml-2 max-md:hidden">圖表</span>

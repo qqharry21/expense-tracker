@@ -1,21 +1,46 @@
 import { Types } from '@/lib/types';
-import { z } from 'zod';
+import { date, z } from 'zod';
+
+const idSchema = z.string().optional();
+const titleSchema = z
+  .string()
+  .min(1, {
+    message: '項目名稱為必填',
+  })
+  .max(255);
+
+const frequencySchema = z.nativeEnum(Types.Frequency);
+const currencySchema = z.nativeEnum(Types.Currency);
+const amountSchema = z.number().min(1, {
+  message: '金額必須大於 1',
+});
+const descriptionSchema = z.string().max(255, { message: '描述最多 255 字元' });
 
 export const expenseSchema = z.object({
-  id: z.string().optional(),
-  title: z
-    .string()
-    .min(1, {
-      message: 'Title is required',
-    })
-    .max(255),
-  startTime: z.date(),
+  id: idSchema,
+  title: titleSchema,
+  startTime: z.date({ message: '開始日期為必填' }),
   endTime: z.date().optional(),
-  currency: z.nativeEnum(Types.Currency),
-  category: z.nativeEnum(Types.Category),
-  amount: z.number().min(1).max(500000),
-  frequency: z.nativeEnum(Types.Frequency),
-  description: z.string().max(255),
+  currency: currencySchema,
+  amount: amountSchema.max(500000, {
+    message: '金額必須介於 1 至 500,000 之間',
+  }),
+  category: z.nativeEnum(Types.ExpenseCategory),
+  frequency: frequencySchema,
+  description: descriptionSchema,
 });
 
 export type ExpenseFormValue = z.infer<typeof expenseSchema>;
+
+export const incomeSchema = z.object({
+  id: idSchema,
+  title: titleSchema,
+  date: date({ message: '日期為必填' }),
+  currency: currencySchema,
+  amount: amountSchema.max(10000000, {
+    message: '金額必須介於 1 至 10,000,000 之間',
+  }),
+  category: z.nativeEnum(Types.ExpenseCategory),
+  frequency: frequencySchema,
+  description: descriptionSchema,
+});

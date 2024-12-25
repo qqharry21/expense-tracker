@@ -29,32 +29,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { currency, expenseCategory, frequency, Level } from '@/lib';
+import { currency, frequency, incomeCategory, Level } from '@/lib';
 import { cn, getAmountAndFrequencyLevel, getFrequencyColor } from '@/lib/utils';
 import { formatDate } from 'date-fns';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
-import { ExpenseForm } from './ExpenseForm';
+import { IncomeForm } from './IncomeForm';
 
-export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
+export const IncomeCard = ({ income }: { income: Types.Income }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const targetCategory = useMemo(
-    () => expenseCategory[expense.category],
-    [expense.category],
+    () => incomeCategory[income.category],
+    [income.category],
   );
 
   const frequencyColor = useMemo(
-    () => getFrequencyColor(expense.frequency),
-    [expense.frequency],
+    () => getFrequencyColor(income.frequency),
+    [income.frequency],
   );
 
   const level = useMemo(
-    () => getAmountAndFrequencyLevel(expense.amount, expense.frequency),
-    [expense.amount, expense.frequency],
+    () => getAmountAndFrequencyLevel(income.amount, income.frequency),
+    [income.amount, income.frequency],
   );
 
   const handleOpenDialog = useCallback(() => {
@@ -70,7 +70,7 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await deleteExpense(expense.id);
+      await deleteExpense(income.id);
       setAlertDialogOpen(false);
       toast.success('刪除支出成功');
     } catch (error) {
@@ -84,20 +84,18 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
     <>
       <Card className="flex flex-col">
         <CardHeader className="relative space-y-0 pb-3">
-          <CardTitle className="mb-3 truncate pr-8" title={expense.title}>
-            {expense.title}
+          <CardTitle className="mb-3 truncate pr-8" title={income.title}>
+            {income.title}
           </CardTitle>
           <div className="flex items-center justify-between gap-2">
             <span className="text-sm text-gray-500">
-              {formatDate(new Date(expense.startTime), 'MM/dd')}{' '}
-              {expense.endTime &&
-                `- ${formatDate(new Date(expense.endTime), 'MM/dd')} ${expense.includeEndTime ? '（含）' : ''}`}
+              {formatDate(new Date(income.date), 'MM/dd')}
             </span>
             <Badge
               variant="outline"
               className="inline-flex items-center gap-x-1"
             >
-              <targetCategory.icon size={14} />
+              {/* <targetCategory.icon size={14} /> */}
               <span>{targetCategory.label}</span>
             </Badge>
           </div>
@@ -124,7 +122,7 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
                 variant="outline"
                 className={cn(`text-xs ${frequencyColor}`)}
               >
-                {frequency[expense.frequency]}
+                {frequency[income.frequency]}
               </Badge>
               <span
                 className={cn(`text-lg font-medium`, {
@@ -133,7 +131,7 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
                   'text-green-500': level === Level.LOW,
                 })}
               >
-                {currency[expense.currency].symbol} {expense.amount}
+                {currency[income.currency].symbol} {income.amount}
               </span>
             </div>
             {/* <div className='flex flex-wrap gap-2 mt-2'>
@@ -148,7 +146,7 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
               </div> */}
             <div>
               <p className="truncate text-sm text-muted-foreground">
-                {expense.description}
+                {income.description}
               </p>
             </div>
           </div>
@@ -160,9 +158,9 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
             <DialogTitle>編輯支出</DialogTitle>
           </DialogHeader>
           <div className="max-h-[600px] overflow-auto">
-            <ExpenseForm
+            <IncomeForm
               mode="edit"
-              defaultValues={expense}
+              defaultValues={income}
               onSuccess={() => setDialogOpen(false)}
             />
           </div>

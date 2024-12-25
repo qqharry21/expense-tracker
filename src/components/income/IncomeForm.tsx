@@ -19,15 +19,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { expenseSchema } from '@/lib/schema';
+import { incomeSchema } from '@/lib/schema';
 import { Types } from '@/lib/types';
 import { cn, formatNumber } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { createExpense, updateExpense } from '@/actions/expense';
-import { expenseCategory, frequency } from '@/lib';
+import { createIncome } from '@/actions/income';
+import { frequency, incomeCategory } from '@/lib';
 import { useMutation } from 'http-react';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { CurrencySelectInput } from '../CurrencySelectInput';
@@ -39,43 +38,38 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form';
-import { Label } from '../ui/label';
-import { Switch } from '../ui/switch';
 
-interface ExpenseFormProps {
+interface IncomeFormProps {
   mode: 'create' | 'edit';
-  defaultValues?: Partial<Types.Expense>;
+  defaultValues?: Partial<Types.Income>;
   onSuccess?: () => void;
   onError?: () => void;
 }
 
-export const ExpenseForm = ({
+export const IncomeForm = ({
   mode,
   defaultValues = {
     title: '',
-    startTime: new Date(),
-    category: Types.ExpenseCategory.FOOD,
+    date: new Date(),
+    category: Types.IncomeCategory.SALARY,
     currency: Types.Currency.TWD,
     amount: 500,
     frequency: Types.Frequency.MONTHLY,
     description: '',
-    includeEndTime: false,
   },
   onSuccess,
   onError,
-}: ExpenseFormProps) => {
-  const [hasEndTime, setHasEndTime] = useState(false);
-  const form = useForm<Types.Expense>({
+}: IncomeFormProps) => {
+  const form = useForm<Types.Income>({
     mode: 'onSubmit',
-    resolver: zodResolver(expenseSchema),
+    resolver: zodResolver(incomeSchema),
     defaultValues,
   });
-  const currentFrequency = form.watch('frequency');
 
   console.log('form', form.getValues());
 
   const { refresh, error, isLoading } = useMutation(
-    mode === 'create' ? createExpense : updateExpense,
+    mode === 'create' ? createIncome : createIncome,
     {
       params: form.getValues(),
       onResolve() {
@@ -118,123 +112,42 @@ export const ExpenseForm = ({
           )}
         />
         <FormField
-          name="startTime"
+          name="date"
           control={form.control}
           render={({ field }) => (
             <FormItem className="col-span-2">
               <FormLabel>開始日期</FormLabel>
-              <div className="grid grid-cols-6 gap-x-4">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'col-span-4 w-full justify-start truncate text-left font-normal',
-                          !field.value && 'text-muted-foreground',
-                        )}
-                        id="startTime"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value
-                          ? format(field.value, 'yyyy-MM-dd')
-                          : '選擇日期'}
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      className="mx-auto w-full max-w-[280px]"
-                    />
-                  </PopoverContent>
-                </Popover>
-
-                <div className="col-span-2 flex items-center justify-end space-x-2">
-                  <Label
-                    htmlFor="hasEndTime"
-                    className="whitespace-nowrap text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
-                  >
-                    截止日
-                  </Label>
-                  <Switch
-                    id="hasEndTime"
-                    checked={hasEndTime}
-                    onCheckedChange={(value) => {
-                      setHasEndTime(value);
-                      form.setValue('endTime', null);
-                      form.setValue('includeEndTime', false);
-                    }}
-                    disabled={currentFrequency === Types.Frequency.ONE_TIME}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        'col-span-4 w-full justify-start truncate text-left font-normal',
+                        !field.value && 'text-muted-foreground',
+                      )}
+                      id="startTime"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {field.value
+                        ? format(field.value, 'yyyy-MM-dd')
+                        : '選擇日期'}
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    className="mx-auto w-full max-w-[280px]"
                   />
-                </div>
-              </div>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
         />
-        {hasEndTime && currentFrequency !== Types.Frequency.ONE_TIME && (
-          <FormField
-            name="endTime"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="col-span-2">
-                <FormLabel>截止日期</FormLabel>
-                <div className="grid grid-cols-6 gap-x-4">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            'col-span-4 w-full justify-start truncate text-left font-normal',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                          id="endTime"
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value
-                            ? format(field.value, 'yyyy-MM-dd')
-                            : '選擇日期'}
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value ?? new Date()}
-                        onSelect={field.onChange}
-                        className="mx-auto w-full max-w-[280px]"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormField
-                    name="includeEndTime"
-                    control={form.control}
-                    render={({ field }) => (
-                      <FormItem className="col-span-2 flex items-center justify-end space-x-2 space-y-0">
-                        <FormLabel className="whitespace-nowrap text-sm font-normal">
-                          包含截止日
-                        </FormLabel>
-                        <FormControl>
-                          <Switch
-                            id="includeEndTime"
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
         <FormField
           name="category"
           control={form.control}
@@ -248,10 +161,10 @@ export const ExpenseForm = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.entries(expenseCategory).map(([key, value]) => (
+                  {Object.entries(incomeCategory).map(([key, value]) => (
                     <SelectItem key={key} value={key}>
                       <span className="flex items-center gap-2">
-                        <value.icon size={16} />
+                        {/* <value.icon size={16} /> */}
                         <span>{value.label}</span>
                       </span>
                     </SelectItem>
@@ -268,17 +181,7 @@ export const ExpenseForm = ({
           render={({ field }) => (
             <FormItem className="col-span-2 md:col-span-1">
               <FormLabel>頻率</FormLabel>
-              <Select
-                defaultValue={field.value}
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  if (value === Types.Frequency.ONE_TIME) {
-                    setHasEndTime(false);
-                    form.setValue('endTime', null);
-                    form.setValue('includeEndTime', false);
-                  }
-                }}
-              >
+              <Select defaultValue={field.value} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger id="frequency">
                     <SelectValue placeholder="選擇頻率" />

@@ -11,6 +11,8 @@ export async function createExpense(data: any) {
     const session = await auth();
     if (!session) return actionData('Unauthorized', { status: 401 });
 
+    const userId = session.user?.id;
+
     const parsed = expenseSchema.safeParse(data);
     if (!parsed.success)
       return actionData(parsed.error.format(), { status: 400 });
@@ -18,7 +20,7 @@ export async function createExpense(data: any) {
     const newExpense = await prisma.expense.create({
       data: {
         ...data,
-        userId: session.user?.id,
+        userId,
       },
     });
     revalidatePath('/dashboard/expenses');

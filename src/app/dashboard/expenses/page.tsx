@@ -13,18 +13,17 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const session = await auth();
-  const expenses = (
-    await prisma.expense.findMany({
-      where: {
-        userId: session?.user?.id,
-      },
-      orderBy: [{ amount: 'desc' }, { frequency: 'asc' }],
-    })
-  ).reverse();
-
   if (!session?.user) {
     redirect('/');
   }
+
+  const userId = session.user.id;
+  const expenses = (
+    await prisma.expense.findMany({
+      where: { userId },
+      orderBy: [{ amount: 'desc' }, { frequency: 'asc' }],
+    })
+  ).reverse();
 
   return (
     <div className="container mx-auto p-4">

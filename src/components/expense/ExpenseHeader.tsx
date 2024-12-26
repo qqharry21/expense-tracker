@@ -1,8 +1,10 @@
 'use client';
 
-import { EyeIcon, EyeOffIcon, LoaderIcon, PlusIcon } from 'lucide-react';
+import { Types } from '@/lib/types';
+import { EyeIcon, EyeOffIcon, PlusIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
+import { Loader } from '../Loader';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -17,15 +19,12 @@ import { ExpenseForm } from './ExpenseForm';
 const ExpenseCharts = dynamic(
   () => import('./ExpenseCharts').then((mod) => mod.ExpenseCharts),
   {
-    loading: () => (
-      <div className="flex items-center justify-center">
-        <LoaderIcon className="h-8 w-8 animate-spin" />
-      </div>
-    ),
+    ssr: false,
+    loading: () => <Loader />,
   },
 );
 
-export const ExpenseHeader = () => {
+export const ExpenseHeader = ({ expenses }: { expenses: Types.Expense[] }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showChart, setShowChart] = useState(false);
   const onShowChartChange = () => {
@@ -38,6 +37,7 @@ export const ExpenseHeader = () => {
       window.localStorage.getItem('showExpenseChart') === 'true';
     if (showExpenseChart) setShowChart(showExpenseChart);
   }, []);
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -74,7 +74,7 @@ export const ExpenseHeader = () => {
           </Dialog>
         </div>
       </div>
-      {showChart && <ExpenseCharts />}
+      {showChart && <ExpenseCharts expenses={expenses} />}
     </>
   );
 };

@@ -17,46 +17,57 @@ export const expenseCategory = {
   [Types.ExpenseCategory.FOOD]: {
     label: '食物',
     icon: PizzaIcon,
+    color: 'hsl(var(--chart-1))',
   },
   [Types.ExpenseCategory.TRANSPORTATION]: {
     label: '交通',
     icon: TramFrontIcon,
+    color: 'hsl(var(--chart-2))',
   },
   [Types.ExpenseCategory.ENTERTAINMENT]: {
     label: '娛樂',
     icon: DramaIcon,
+    color: 'hsl(var(--chart-3))',
   },
   [Types.ExpenseCategory.HEALTH]: {
     label: '健康',
     icon: HeartPulseIcon,
+    color: 'hsl(var(--chart-4))',
   },
   [Types.ExpenseCategory.BILLS]: {
     label: '帳單',
     icon: ReceiptIcon,
+    color: 'hsl(var(--chart-5))',
   },
   [Types.ExpenseCategory.SHOPPING]: {
     label: '購物',
     icon: ShoppingCartIcon,
+    color: 'hsl(var(--chart-6))',
   },
   [Types.ExpenseCategory.LEARNING]: {
     label: '教育',
     icon: GraduationCapIcon,
+    color: 'hsl(var(--chart-7))',
   },
   [Types.ExpenseCategory.TRAVEL]: {
     label: '旅遊',
     icon: PlaneIcon,
+    color: 'hsl(var(--chart-8))',
   },
   [Types.ExpenseCategory.INVESTMENT]: {
     label: '投資',
     icon: CircleDollarSignIcon,
+    color: 'hsl(var(--chart-9))',
   },
   [Types.ExpenseCategory.INSURANCE]: {
     label: '保險',
     icon: ShieldPlusIcon,
+    color: 'hsl(var(--chart-10))',
   },
   [Types.ExpenseCategory.OTHER]: {
     label: '其他',
     icon: CogIcon,
+    color: 'hsl(var(--chart-11))',
   },
 } as const;
 

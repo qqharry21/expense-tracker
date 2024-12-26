@@ -1,15 +1,20 @@
 import { clsx, type ClassValue } from 'clsx';
 import {
   DateArg,
+  differenceInCalendarDays,
+  differenceInCalendarWeeks,
   endOfMonth,
   endOfWeek,
   format,
   formatDate,
   FormatOptions,
+  isAfter,
   isBefore,
   isSameDay,
   isSameMonth,
+  isWithinInterval,
   startOfDay,
+  startOfMonth,
   startOfWeek,
 } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
@@ -17,24 +22,24 @@ import { twMerge } from 'tailwind-merge';
 import { Level, thresholds } from '.';
 import { Types } from './types';
 
-export function cn(...inputs: ClassValue[]) {
+export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
-}
+};
 
-export function getLocalizeDate(
+export const getLocalizeDate = (
   date: DateArg<Date>,
   formatStr: string,
   options?: FormatOptions,
-) {
+) => {
   return format(date, formatStr, {
     locale: zhTW,
     ...options,
   });
-}
+};
 
-export function getCurrentDate(format: string = 'yyyy-MM-dd') {
+export const getCurrentDate = (format: string = 'yyyy-MM-dd') => {
   return formatDate(new Date(), format);
-}
+};
 
 export const getInitialsFromName = (name: string) => {
   const initials = name
@@ -172,7 +177,7 @@ export const getSixMonthString = () => {
  * @param date - 指定日期（Date 型別）
  * @returns 當月剩餘的週數（包含當前週）
  */
-export function getRemainingWeeksInMonth(date: Date): number {
+export const getRemainingWeeksInMonth = (date: Date): number => {
   // 當前週的開始與結束
   const startOfCurrentWeek = startOfWeek(date, { weekStartsOn: 0 }); // 週日開始
   const endOfCurrentWeek = endOfWeek(date, { weekStartsOn: 0 }); // 週六結束
@@ -202,4 +207,113 @@ export function getRemainingWeeksInMonth(date: Date): number {
 
   // 總剩餘週數
   return currentWeekInMonth + remainingWeeks;
-}
+};
+
+/**
+ * 加總這個月每個支出類別的金額，並依照支出頻率計算總金額。
+ * 若支出頻率為每日，則乘上當月的天數；
+ * 若支出頻率為每週，則乘上當月剩餘的週數；
+ * 若支出頻率為每月，則直接加總金額。
+ * 若有起始時間，則以起始時間含當天再開始計算；
+ * 若有結束時間，則以結束時間含當天再結束計算。
+ */
+export const getMonthlyExpenseSummary = (
+  expenses: Types.Expense[],
+  referenceDate: Date = new Date(),
+): Record<Types.$Enums.ExpenseCategory, number> => {
+  const currentMonthStart = startOfMonth(referenceDate);
+  const currentMonthEnd = endOfMonth(referenceDate);
+
+  return expenses.reduce(
+    (summary, expense) => {
+      const { amount, frequency, startTime, endTime, category } = expense;
+
+      // 確定支出有效的起始和結束時間
+      const effectiveStart = isAfter(startTime, currentMonthStart)
+        ? startTime
+        : currentMonthStart;
+      let effectiveEnd;
+      if (endTime) {
+        if (isBefore(endTime, currentMonthStart)) {
+          effectiveEnd = null;
+        } else if (isAfter(endTime, currentMonthEnd)) {
+          effectiveEnd = currentMonthEnd;
+        } else {
+          effectiveEnd = endTime;
+        }
+      } else {
+        effectiveEnd = currentMonthEnd;
+      }
+
+      // 如果有效結束時間早於有效起始時間，支出不計算
+      if (!effectiveEnd || isBefore(effectiveEnd, effectiveStart)) {
+        return summary;
+      }
+
+      const occurrences = calculateOccurrences(
+        frequency,
+        effectiveStart,
+        effectiveEnd,
+        startTime,
+      );
+
+      const totalAmount = amount * occurrences;
+
+      if (totalAmount > 0) {
+        summary[category] = (summary[category] || 0) + totalAmount;
+      }
+
+      return summary;
+    },
+    {} as Record<Types.$Enums.ExpenseCategory, number>,
+  );
+};
+
+/**
+ * 計算支出的當月金額
+ */
+const calculateOccurrences = (
+  frequency: Types.Frequency,
+  effectiveStart: Date,
+  effectiveEnd: Date,
+  startTime: Date,
+): number => {
+  switch (frequency) {
+    case Types.Frequency.DAILY:
+      return differenceInCalendarDays(effectiveEnd, effectiveStart) + 1;
+
+    case Types.Frequency.WEEKLY:
+      return (
+        differenceInCalendarWeeks(effectiveEnd, effectiveStart, {
+          weekStartsOn: 1,
+        }) + 1
+      );
+
+    case Types.Frequency.ANNUALLY:
+      return 1 / 12;
+
+    case Types.Frequency.MONTHLY:
+    case Types.Frequency.ONE_TIME:
+      return isWithinInterval(startTime, {
+        start: effectiveStart,
+        end: effectiveEnd,
+      })
+        ? 1
+        : 0;
+
+    default:
+      return 0;
+  }
+};
+
+/**
+ * 取得支出類別的前五大金額
+ */
+export const getTopFiveCategories = (
+  summary: Record<Types.$Enums.ExpenseCategory, number>,
+): { name: string; amount: number }[] => {
+  return Object.entries(summary)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([name, amount]) => ({ name, amount }));
+};

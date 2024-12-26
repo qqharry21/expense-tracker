@@ -1,6 +1,6 @@
 'use client';
 
-import { format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -27,7 +27,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createExpense, updateExpense } from '@/actions/expense';
 import { expenseCategory, frequency } from '@/lib';
 import { useMutation } from 'http-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { CurrencySelectInput } from '../CurrencySelectInput';
@@ -59,22 +59,30 @@ export const ExpenseForm = ({
     amount: 500,
     frequency: Types.Frequency.MONTHLY,
     description: '',
-    includeEndTime: false,
+    includeEndTime: true,
   },
   onSuccess,
   onError,
 }: ExpenseFormProps) => {
   const [hasEndTime, setHasEndTime] = useState(false);
   const form = useForm<Types.Expense>({
-    mode: 'onChange',
+    mode: 'onTouched',
     resolver: zodResolver(expenseSchema),
     defaultValues,
   });
-  const currentFrequency = form.watch('frequency');
-
   console.log('form', form.getValues());
+  console.log('form errors', form.formState.errors);
+  console.log('form isDirty', form.formState.isDirty);
+  console.log('form isValid', form.formState.isValid);
 
-  const { refresh, error, isLoading } = useMutation(
+  const currentFrequency = form.watch('frequency');
+  const startTime = form.watch('startTime');
+  const includeEndTime = form.watch('includeEndTime');
+  const disabledEndTime = useMemo(() => {
+    return addDays(startTime, includeEndTime ? 1 : 2);
+  }, [startTime, includeEndTime]);
+
+  const { refresh, isLoading } = useMutation(
     mode === 'create' ? createExpense : updateExpense,
     {
       params: form.getValues(),
@@ -165,7 +173,7 @@ export const ExpenseForm = ({
                     onCheckedChange={(value) => {
                       setHasEndTime(value);
                       form.setValue('endTime', null);
-                      form.setValue('includeEndTime', false);
+                      form.setValue('includeEndTime', true);
                     }}
                     disabled={currentFrequency === Types.Frequency.ONE_TIME}
                   />
@@ -205,6 +213,9 @@ export const ExpenseForm = ({
                       <Calendar
                         mode="single"
                         selected={field.value ?? new Date()}
+                        disabled={{
+                          before: disabledEndTime,
+                        }}
                         onSelect={field.onChange}
                         className="mx-auto w-full max-w-[280px]"
                       />
@@ -296,7 +307,6 @@ export const ExpenseForm = ({
             </FormItem>
           )}
         />
-
         <FormField
           name="amount"
           control={form.control}
@@ -369,9 +379,7 @@ export const ExpenseForm = ({
         <Button
           type="submit"
           className="col-span-2 w-full"
-          disabled={
-            isLoading || !form.formState.isValid || !form.formState.isDirty
-          }
+          disabled={isLoading || !form.formState.isDirty}
         >
           {mode === 'create' ? '新增支出' : '更新支出'}
         </Button>

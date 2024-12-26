@@ -16,19 +16,32 @@ const amountSchema = z.number().min(1, {
 });
 const descriptionSchema = z.string().max(255, { message: '描述最多 255 字元' });
 
-export const expenseSchema = z.object({
-  id: idSchema,
-  title: titleSchema,
-  startTime: z.date({ message: '開始日期為必填' }),
-  endTime: z.date().optional(),
-  currency: currencySchema,
-  amount: amountSchema.max(500000, {
-    message: '金額必須介於 1 至 500,000 之間',
-  }),
-  category: z.nativeEnum(Types.ExpenseCategory),
-  frequency: frequencySchema,
-  description: descriptionSchema,
-});
+export const expenseSchema = z
+  .object({
+    id: idSchema,
+    title: titleSchema,
+    startTime: z.date({ message: '開始日期為必填' }),
+    endTime: z.date().optional().nullable(),
+    currency: currencySchema,
+    amount: amountSchema.max(500000, {
+      message: '金額必須介於 1 至 500,000 之間',
+    }),
+    category: z.nativeEnum(Types.ExpenseCategory),
+    frequency: frequencySchema,
+    description: descriptionSchema,
+  })
+  .refine(
+    (data) => {
+      if (data.endTime !== undefined && data.endTime !== null) {
+        return data.endTime > data.startTime;
+      }
+      return true;
+    },
+    {
+      message: '結束日期必須晚於開始日期',
+      path: ['endTime'],
+    },
+  );
 
 export type ExpenseFormValue = z.infer<typeof expenseSchema>;
 

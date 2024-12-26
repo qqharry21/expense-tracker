@@ -1,6 +1,6 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
+import { TrendingDown, TrendingUp } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 
 import {
@@ -17,34 +17,51 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-const chartData = [
-  { month: 'January', desktop: 186 },
-  { month: 'February', desktop: 305 },
-  { month: 'March', desktop: 237 },
-  { month: 'April', desktop: 73 },
-  { month: 'May', desktop: 209 },
-  { month: 'June', desktop: 214 },
-];
+import { Types } from '@/lib/types';
+import {
+  getDecimal,
+  getLastMonthsTotalExpenses,
+  getMonthlyGrowth,
+} from '@/lib/utils';
+import { useMemo } from 'react';
 
 const chartConfig = {
-  desktop: {
-    label: 'Desktop',
+  amount: {
+    label: 'Amount',
     color: 'hsl(var(--chart-1))',
   },
 } satisfies ChartConfig;
 
-export function TotalExpensesTrendLineChart() {
+interface ChartProps {
+  expenses: Types.Expense[];
+  totalMonths: number;
+}
+
+export function TotalExpensesTrendLineChart({
+  expenses,
+  totalMonths,
+}: ChartProps) {
+  const data = useMemo(
+    () => getLastMonthsTotalExpenses(expenses, totalMonths).reverse(),
+    [expenses, totalMonths],
+  );
+
+  const monthlyGrowth = useMemo(
+    () => getDecimal((getMonthlyGrowth(expenses) ?? 0) / 100, 2),
+    [expenses],
+  );
+  console.log('🚨 - monthlyGrowth', monthlyGrowth);
   return (
     <Card>
       <CardHeader>
         <CardTitle>總支出趨勢</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription>顯示過去{totalMonths}個月的總支出金額</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <LineChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             margin={{
               left: 12,
               right: 12,
@@ -60,12 +77,13 @@ export function TotalExpensesTrendLineChart() {
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent />}
+              formatter={(value: number) => `共${value}元`}
             />
             <Line
-              dataKey="desktop"
+              dataKey="amount"
               type="natural"
-              stroke="var(--color-desktop)"
+              stroke="var(--color-amount)"
               strokeWidth={2}
               dot={false}
             />
@@ -74,10 +92,17 @@ export function TotalExpensesTrendLineChart() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          本月支出比上月{monthlyGrowth > 0 ? '增長' : '減少'}{' '}
+          <span
+            className={monthlyGrowth > 0 ? 'text-red-500' : 'text-green-500'}
+          >
+            {Math.abs(monthlyGrowth)}%
+          </span>
+          {monthlyGrowth > 0 ? (
+            <TrendingUp size={16} />
+          ) : (
+            <TrendingDown size={16} />
+          )}
         </div>
       </CardFooter>
     </Card>

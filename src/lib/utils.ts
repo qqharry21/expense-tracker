@@ -4,18 +4,14 @@ import {
   differenceInCalendarDays,
   differenceInCalendarWeeks,
   endOfMonth,
-  endOfWeek,
   format,
-  formatDate,
   FormatOptions,
   isAfter,
   isBefore,
   isSameDay,
-  isSameMonth,
   isWithinInterval,
   startOfDay,
   startOfMonth,
-  startOfWeek,
 } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
@@ -26,6 +22,13 @@ export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 };
 
+/**
+ * 取得本地化日期字串
+ * @param date
+ * @param formatStr
+ * @param options
+ * @returns
+ */
 export const getLocalizeDate = (
   date: DateArg<Date>,
   formatStr: string,
@@ -37,10 +40,20 @@ export const getLocalizeDate = (
   });
 };
 
+/**
+ * 取得當前日期
+ * @param format
+ * @returns
+ */
 export const getCurrentDate = (format: string = 'yyyy-MM-dd') => {
-  return formatDate(new Date(), format);
+  return getLocalizeDate(new Date(), format);
 };
 
+/**
+ * 取得名字的縮寫
+ * @param name
+ * @returns
+ */
 export const getInitialsFromName = (name: string) => {
   const initials = name
     .split(' ')
@@ -51,6 +64,8 @@ export const getInitialsFromName = (name: string) => {
 
 /**
  * 強制轉換數字格式，其數值字串不可小於 0
+ * @param value
+ * @returns
  */
 export const formatNumber = (value: string) => {
   const num = Number(value);
@@ -60,12 +75,20 @@ export const formatNumber = (value: string) => {
   return num;
 };
 
+/**
+ * 格式化數字，每三位數加一個逗號
+ * @param num
+ * @returns
+ */
 export const formatNumberWithCommas = (num: number): string => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 /**
  * 取得金額與頻率的嚴重程度
+ * @param amount
+ * @param frequency
+ * @returns
  */
 export const getAmountAndFrequencyLevel = (
   amount: number,
@@ -100,6 +123,12 @@ export const getAmountColor = (amount: number, frequency: Types.Frequency) => {
   return levelColor[level];
 };
 
+/**
+ * 判斷支出是否在指定日期
+ * @param date
+ * @param expense
+ * @returns
+ */
 export const isExpenseOnDate = (date: Date, expense: Types.Expense) => {
   const { startTime, endTime, frequency, includeEndTime } = expense;
   const startDate = startOfDay(startTime);
@@ -173,43 +202,6 @@ export const getSixMonthString = () => {
 };
 
 /**
- * 計算指定日期當月剩餘的週數（包含當前週）。
- * @param date - 指定日期（Date 型別）
- * @returns 當月剩餘的週數（包含當前週）
- */
-export const getRemainingWeeksInMonth = (date: Date): number => {
-  // 當前週的開始與結束
-  const startOfCurrentWeek = startOfWeek(date, { weekStartsOn: 0 }); // 週日開始
-  const endOfCurrentWeek = endOfWeek(date, { weekStartsOn: 0 }); // 週六結束
-
-  // 本月的最後一天
-  const endOfCurrentMonth = endOfMonth(date);
-
-  // 檢查當前週是否整週都在本月
-  const currentWeekInMonth = isSameMonth(startOfCurrentWeek, date)
-    ? isSameMonth(endOfCurrentWeek, date)
-      ? 1 // 當前週整週都在本月
-      : 0 // 當前週部分超出本月
-    : 0;
-
-  // 計算剩餘完整週數（不含當前週）
-  let remainingWeeks = 0;
-  if (currentWeekInMonth) {
-    let nextWeekStart = startOfWeek(endOfCurrentWeek, { weekStartsOn: 0 });
-    while (nextWeekStart < endOfCurrentMonth) {
-      remainingWeeks++;
-      nextWeekStart = startOfWeek(
-        new Date(nextWeekStart.getTime() + 7 * 24 * 60 * 60 * 1000),
-        { weekStartsOn: 0 },
-      );
-    }
-  }
-
-  // 總剩餘週數
-  return currentWeekInMonth + remainingWeeks;
-};
-
-/**
  * 加總這個月每個支出類別的金額，並依照支出頻率計算總金額。
  * 若支出頻率為每日，則乘上當月的天數；
  * 若支出頻率為每週，則乘上當月剩餘的週數；
@@ -229,8 +221,8 @@ export const getMonthlyExpenseSummary = (
       const { amount, frequency, startTime, endTime, category } = expense;
 
       // 確定支出有效的起始和結束時間
-      const effectiveStart = isAfter(startTime, currentMonthStart)
-        ? startTime
+      const effectiveStart = isAfter(new Date(startTime), currentMonthStart)
+        ? new Date(startTime)
         : currentMonthStart;
       let effectiveEnd;
       if (endTime) {
@@ -239,7 +231,7 @@ export const getMonthlyExpenseSummary = (
         } else if (isAfter(endTime, currentMonthEnd)) {
           effectiveEnd = currentMonthEnd;
         } else {
-          effectiveEnd = endTime;
+          effectiveEnd = new Date(endTime);
         }
       } else {
         effectiveEnd = currentMonthEnd;
@@ -254,7 +246,7 @@ export const getMonthlyExpenseSummary = (
         frequency,
         effectiveStart,
         effectiveEnd,
-        startTime,
+        new Date(startTime),
       );
 
       const totalAmount = amount * occurrences;
@@ -312,8 +304,77 @@ const calculateOccurrences = (
 export const getTopFiveCategories = (
   summary: Record<Types.$Enums.ExpenseCategory, number>,
 ): { name: string; amount: number }[] => {
+  console.log('🚨 - summary', summary);
   return Object.entries(summary)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
     .map(([name, amount]) => ({ name, amount }));
+};
+
+export const getMonthlyTotalExpenses = (
+  expenses: Types.Expense[],
+  referenceDate: Date = new Date(),
+): number => {
+  return Object.values(
+    getMonthlyExpenseSummary(expenses, referenceDate),
+  ).reduce((total, amount) => total + amount, 0);
+};
+
+export const getLastMonthsTotalExpenses = (
+  expenses: Types.Expense[],
+  totalMonths: number,
+  referenceDate: Date = new Date(),
+): { month: string; amount: number }[] => {
+  const months = Array.from({ length: totalMonths }).map((_, index) => {
+    const date = new Date(referenceDate);
+    date.setMonth(date.getMonth() - index);
+    return date;
+  });
+
+  return months.map((date) => {
+    return {
+      month: getLocalizeDate(date, 'MMM'),
+      amount: getMonthlyTotalExpenses(expenses, date),
+    };
+  });
+};
+
+/**
+ * 計算本月比上個月成長的幅度百分比
+ * @param expenses 支出數據陣列
+ * @param referenceDate 參考日期，默認為當前日期
+ * @returns 成長百分比，如果上個月總支出為0則返回null
+ */
+/**
+ * 計算本月比上個月成長的幅度百分比
+ * @param expenses 支出數據陣列
+ * @param referenceDate 參考日期，默認為當前日期
+ * @returns 成長百分比，如果上個月總支出為0則返回null
+ */
+
+export const getMonthlyGrowth = (
+  expenses: Types.Expense[],
+  referenceDate: Date = new Date(),
+): number | null => {
+  const currentMonth = getMonthlyTotalExpenses(expenses, referenceDate);
+  const lastMonth = getMonthlyTotalExpenses(
+    expenses,
+    new Date(referenceDate.setMonth(referenceDate.getMonth() - 1)),
+  );
+
+  if (lastMonth === 0) {
+    return null;
+  }
+
+  return ((currentMonth - lastMonth) / lastMonth) * 100;
+};
+
+/**
+ * 取得小數點後幾位數
+ * @param num
+ * @param digits
+ * @returns
+ */
+export const getDecimal = (num: number, digits: number = 2) => {
+  return Math.round(num * 10 ** digits) / 10 ** digits;
 };

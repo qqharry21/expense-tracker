@@ -8,7 +8,7 @@ export const ExpenseCharts = ({ expenses }: { expenses: Types.Expense[] }) => {
   return (
     <div className="grid gap-8 border-b border-border pb-8 lg:grid-cols-2">
       <ExpenseCategoryStackedBarChart expenses={expenses} />
-      <TotalExpensesTrendLineChart />
+      <TotalExpensesTrendLineChart expenses={expenses} totalMonths={6} />
     </div>
   );
 };

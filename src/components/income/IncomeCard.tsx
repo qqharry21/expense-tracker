@@ -30,7 +30,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { currency, frequency, incomeCategory, Level } from '@/lib';
-import { cn, getAmountAndFrequencyLevel, getFrequencyColor } from '@/lib/utils';
+import { getAmountAndFrequencyLevel, getFrequencyColor } from '@/lib/helper';
+import { cn } from '@/lib/utils';
 import { formatDate } from 'date-fns';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';

@@ -17,12 +17,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import { getLastMonthsTotalExpenses, getMonthlyGrowth } from '@/lib/helper';
 import { Types } from '@/lib/types';
-import {
-  getDecimal,
-  getLastMonthsTotalExpenses,
-  getMonthlyGrowth,
-} from '@/lib/utils';
+import { getDecimal } from '@/lib/utils';
 import { useMemo } from 'react';
 
 const chartConfig = {
@@ -50,7 +47,7 @@ export function TotalExpensesTrendLineChart({
     () => getDecimal((getMonthlyGrowth(expenses) ?? 0) / 100, 2),
     [expenses],
   );
-  console.log('🚨 - monthlyGrowth', monthlyGrowth);
+
   return (
     <Card>
       <CardHeader>
@@ -92,10 +89,11 @@ export function TotalExpensesTrendLineChart({
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          本月支出比上月{monthlyGrowth > 0 ? '增長' : '減少'}{' '}
+          本月支出比上月{' '}
           <span
             className={monthlyGrowth > 0 ? 'text-red-500' : 'text-green-500'}
           >
+            {monthlyGrowth > 0 ? '增長' : '減少'} {''}
             {Math.abs(monthlyGrowth)}%
           </span>
           {monthlyGrowth > 0 ? (

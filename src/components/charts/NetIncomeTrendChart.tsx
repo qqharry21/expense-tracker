@@ -17,7 +17,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { getSixMonthString } from '@/lib/utils';
+import { getSixMonthString } from '@/lib/helper';
 const chartData = [
   { month: 'January', income: 186 },
   { month: 'February', income: 305 },

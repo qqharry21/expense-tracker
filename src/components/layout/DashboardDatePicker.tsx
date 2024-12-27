@@ -4,8 +4,9 @@ import { format, isSameMonth } from 'date-fns';
 import { useCallback, useState } from 'react';
 import { DayButtonProps, TZDate } from 'react-day-picker';
 
+import { isExpenseOnDate } from '@/lib/helper';
 import { Types } from '@/lib/types';
-import { cn, isExpenseOnDate } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 import { SidebarGroup, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '../ui/button';

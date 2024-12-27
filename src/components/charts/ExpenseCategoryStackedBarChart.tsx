@@ -18,8 +18,8 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { expenseCategory } from '@/lib';
+import { getMonthlyExpenseSummary, getTopFiveCategories } from '@/lib/helper';
 import { Types } from '@/lib/types';
-import { getMonthlyExpenseSummary, getTopFiveCategories } from '@/lib/utils';
 import { useCallback, useMemo } from 'react';
 
 const chartConfig = {

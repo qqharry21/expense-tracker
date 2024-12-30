@@ -92,14 +92,6 @@ export const currency = {
     label: '日幣',
     symbol: '¥',
   },
-  [Types.Currency.RM]: {
-    label: '馬來幣',
-    symbol: 'RM',
-  },
-  [Types.Currency.SGD]: {
-    label: '新加坡幣',
-    symbol: 'S$',
-  },
 } as const;
 
 export const thresholds = {

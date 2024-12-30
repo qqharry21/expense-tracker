@@ -128,8 +128,6 @@ enum Currency {
   USD
   JPY
   TWD
-  RM
-  SGD
 }
 
 enum GoalStatus {

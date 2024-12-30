@@ -136,4 +136,7 @@ export const routeMap: Map<string, { name: string; url: string }> = (() => {
 
 export const ROOT = '/';
 export const PUBLIC_ROUTES = [ROOT, '/api', '/api/auth/callback/google'];
-export const PROTECTED_ROUTES = routes.map((route) => `/${route.value}`);
+export const PROTECTED_ROUTES = [
+  ...routes.map((route) => `/${route.value}`),
+  '/api/currency',
+];

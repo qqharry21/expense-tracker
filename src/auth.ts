@@ -19,4 +19,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    authorized({ auth }) {
+      console.log('🚨 - authorized', auth);
+      return !!auth;
+    },
+  },
 });

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { auth } from '@/auth';
+import { EmptyData } from '@/components/EmptyData';
 import { ExpenseCardList } from '@/components/expense/ExpenseCardList';
 import { ExpenseHeader } from '@/components/expense/ExpenseHeader';
 import { prisma } from '@/lib/prisma';
@@ -28,7 +29,11 @@ export default async function Page() {
   return (
     <div className="container mx-auto space-y-8 p-4">
       <ExpenseHeader expenses={expenses} />
-      <ExpenseCardList expenses={expenses} />
+      {expenses.length === 0 ? (
+        <EmptyData />
+      ) : (
+        <ExpenseCardList expenses={expenses} />
+      )}
     </div>
   );
 }

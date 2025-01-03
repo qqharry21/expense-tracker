@@ -136,7 +136,8 @@ export const getMonthlyExpenseSummary = (
 
   return expenses.reduce(
     (summary, expense) => {
-      const { amount, frequency, startTime, endTime, category } = expense;
+      const { amount, currency, frequency, startTime, endTime, category } =
+        expense;
 
       // 確定支出有效的起始和結束時間
       const effectiveStart = isAfter(new Date(startTime), currentMonthStart)
@@ -238,6 +239,13 @@ export const getMonthlyTotalExpenses = (
   ).reduce((total, amount) => total + amount, 0);
 };
 
+/**
+ * 取得最近幾個月的總支出
+ * @param expenses 支出數據陣列
+ * @param totalMonths 目標月數
+ * @param referenceDate 參考日期，默認為當前日期
+ * @returns 月份與金額的陣列
+ */
 export const getLastMonthsTotalExpenses = (
   expenses: Types.Expense[],
   totalMonths: number,
@@ -263,13 +271,6 @@ export const getLastMonthsTotalExpenses = (
  * @param referenceDate 參考日期，默認為當前日期
  * @returns 成長百分比，如果上個月總支出為0則返回null
  */
-/**
- * 計算本月比上個月成長的幅度百分比
- * @param expenses 支出數據陣列
- * @param referenceDate 參考日期，默認為當前日期
- * @returns 成長百分比，如果上個月總支出為0則返回null
- */
-
 export const getMonthlyGrowth = (
   expenses: Types.Expense[],
   referenceDate: Date = new Date(),

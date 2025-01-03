@@ -9,7 +9,10 @@ interface LoaderProps {
 export const Loader = ({ className, size = 40 }: LoaderProps) => {
   return (
     <div className={cn('flex items-center justify-center', className)}>
-      <LoaderCircleIcon size={size} className="animate-spin" />
+      <LoaderCircleIcon
+        size={size}
+        className="animate-spin after:absolute after:bottom-0 after:h-px after:w-fit after:bg-[#D71920] after:content-['']"
+      />
     </div>
   );
 };

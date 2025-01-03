@@ -1,4 +1,3 @@
-import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 
 const EXCHANGE_RATE_API_KEY = process.env.EXCHANGE_RATE_API_KEY;
@@ -12,7 +11,7 @@ const CACHE_DURATION = 60 * 60 * 1000;
 
 export const runtime = 'edge'; // Run this route on Vercel Edge
 
-export const GET = auth(async (req) => {
+export const GET = async () => {
   const currentTime = Date.now();
   console.log('🚨 - currentTime', currentTime);
 
@@ -68,4 +67,4 @@ export const GET = auth(async (req) => {
       { status: 500 },
     );
   }
-});
+};

@@ -1,17 +1,7 @@
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Skeleton } from './ui/skeleton';
 
-export const ChartSkeleton = ({ length }: { length: number }) => {
-  return (
-    <div className="grid gap-8 border-b border-border pb-8 lg:grid-cols-2">
-      {[...Array(length)].map((_, i) => (
-        <SkeletonChart key={i} />
-      ))}
-    </div>
-  );
-};
-
-const SkeletonChart = () => {
+export const ChartSkeleton = () => {
   return (
     <Card>
       <CardHeader>

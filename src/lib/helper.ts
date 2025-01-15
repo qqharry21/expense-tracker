@@ -168,7 +168,7 @@ export const getMonthlyExpenseSummary = (
         new Date(startTime),
       );
 
-      const totalAmount = amount * occurrences;
+      const totalAmount = Math.floor(amount * occurrences);
 
       if (totalAmount > 0) {
         summary[category] = (summary[category] || 0) + totalAmount;

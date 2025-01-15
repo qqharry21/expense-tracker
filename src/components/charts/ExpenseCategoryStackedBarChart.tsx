@@ -1,7 +1,7 @@
 'use client';
 
 import { TrendingUp } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from 'recharts';
 
 import {
   Card,
@@ -64,15 +64,14 @@ export function ExpenseCategoryStackedBarChart({ expenses }: ChartProps) {
           <BarChart
             accessibilityLayer
             data={data}
-            layout="vertical"
+            // layout="vertical"
             margin={{
-              left: 0,
+              top: 20,
             }}
           >
             <CartesianGrid horizontal={false} />
-            <YAxis
+            <XAxis
               dataKey="category"
-              type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
@@ -80,22 +79,18 @@ export function ExpenseCategoryStackedBarChart({ expenses }: ChartProps) {
                 chartConfig[value as keyof typeof chartConfig]?.label
               }
             />
-            <XAxis
-              dataKey="amount"
-              type="number"
-              tickLine={false}
-              axisLine={false}
-              tickCount={6}
-              tickMargin={8}
-              tickFormatter={(value) =>
-                value === 0 ? value : `${value / 1000}k`
-              }
-            />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="amount" layout="vertical" radius={5} />
+            <Bar dataKey="amount" fill="var(--color-desktop)" radius={8}>
+              <LabelList
+                position="top"
+                offset={12}
+                className="fill-foreground"
+                fontSize={12}
+              />
+            </Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>

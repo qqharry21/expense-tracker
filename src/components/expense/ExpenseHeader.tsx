@@ -20,7 +20,7 @@ const ExpenseCharts = dynamic(
   () => import('./ExpenseCharts').then((mod) => mod.ExpenseCharts),
   {
     ssr: false,
-    loading: () => <ChartSkeleton length={2} />,
+    loading: () => <ChartSkeleton length={4} />,
   },
 );
 

@@ -100,16 +100,16 @@ export const ExpenseForm = ({
 
   const onSubmit = form.handleSubmit(refresh);
 
-  const handleKeydown = (event: React.KeyboardEvent<HTMLFormElement>) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
+  const handleKeydown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === 'Enter' && !(e.target instanceof HTMLTextAreaElement)) {
+      e.preventDefault();
     }
   };
   return (
     <Form {...form}>
       <form
-        onKeyDown={handleKeydown}
         onSubmit={onSubmit}
+        onKeyDown={handleKeydown}
         className="grid grid-cols-2 gap-x-2 gap-y-4 px-1 py-2 md:px-4 md:py-4"
       >
         <FormField

@@ -3,8 +3,8 @@
 import { Types } from '@/lib/types';
 import { EyeIcon, EyeOffIcon, PlusIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
-import { Loader } from '../Loader';
+import { useLayoutEffect, useState } from 'react';
+import { ChartSkeleton } from '../ChartSkeleton';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -20,7 +20,7 @@ const ExpenseCharts = dynamic(
   () => import('./ExpenseCharts').then((mod) => mod.ExpenseCharts),
   {
     ssr: false,
-    loading: () => <Loader />,
+    loading: () => <ChartSkeleton length={2} />,
   },
 );
 
@@ -32,7 +32,7 @@ export const ExpenseHeader = ({ expenses }: { expenses: Types.Expense[] }) => {
     window.localStorage.setItem('showExpenseChart', JSON.stringify(!showChart));
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const showExpenseChart =
       window.localStorage.getItem('showExpenseChart') === 'true';
     if (showExpenseChart) setShowChart(showExpenseChart);

@@ -5,6 +5,7 @@ import {
   Gamepad2Icon,
   GiftIcon,
   GraduationCapIcon,
+  HeartHandshakeIcon,
   HeartPulseIcon,
   HomeIcon,
   LandmarkIcon,
@@ -88,10 +89,15 @@ export const expenseCategory = {
     icon: BookUserIcon,
     color: 'hsl(var(--chart-14))',
   },
+  [Types.ExpenseCategory.CHARITY]: {
+    label: '慈善',
+    icon: HeartHandshakeIcon,
+    color: 'hsl(var(--chart-15))',
+  },
   [Types.ExpenseCategory.OTHER]: {
     label: '其他',
     icon: CogIcon,
-    color: 'hsl(var(--chart-15))',
+    color: 'hsl(var(--chart-16))',
   },
 } as const;
 

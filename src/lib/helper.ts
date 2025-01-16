@@ -150,7 +150,8 @@ const getExpenseSummary = (
 ): Record<Types.$Enums.ExpenseCategory, number> => {
   return expenses.reduce(
     (summary, expense) => {
-      const { amount, frequency, startTime, endTime, category } = expense;
+      const { amount, frequency, startTime, currencyRate, endTime, category } =
+        expense;
 
       // 確定支出有效的起始和結束時間
       const effectiveStart = isAfter(new Date(startTime), referenceStartDate)
@@ -182,7 +183,7 @@ const getExpenseSummary = (
         interval,
       );
 
-      const totalAmount = Math.floor(amount * occurrences);
+      const totalAmount = Math.floor(amount * occurrences * currencyRate);
 
       if (totalAmount > 0) {
         summary[category] = (summary[category] || 0) + totalAmount;

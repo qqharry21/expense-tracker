@@ -6,7 +6,7 @@ import { DayButtonProps, TZDate } from 'react-day-picker';
 
 import { isExpenseOnDate } from '@/lib/helper';
 import { Types } from '@/lib/types';
-import { cn } from '@/lib/utils';
+import { cn, formatNumberWithCommas } from '@/lib/utils';
 
 import { SidebarGroup, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '../ui/button';
@@ -97,6 +97,11 @@ const CustomDayButton = ({
   modifiers,
   ...props
 }: CustomDayContentProps) => {
+  const getAmount = useCallback(
+    (amount: number, rate: number) =>
+      formatNumberWithCommas(Math.floor(amount * rate)),
+    [],
+  );
   return (
     <button
       className={cn(
@@ -121,11 +126,20 @@ const CustomDayButton = ({
         {existExpenses.length > 0 && (
           <HoverCardContent className="flex w-fit flex-col gap-2" side="top">
             {existExpenses.map((expense) => (
-              <div key={expense.id} className="flex items-center gap-2">
-                <span className="text-sm">{expense.title}</span>
-                <span className="text-sm text-primary">
-                  {expense.amount.toLocaleString()}
-                </span>
+              <div
+                key={expense.id}
+                className="flex items-center justify-between gap-4"
+              >
+                <div
+                  className="max-w-[120px] truncate text-sm"
+                  title={expense.title}
+                >
+                  {expense.title}
+                </div>
+                <p className="text-sm text-primary">
+                  {getAmount(expense.amount, expense.currencyRate)}{' '}
+                  <span className="text-xs">元</span>
+                </p>
               </div>
             ))}
           </HoverCardContent>

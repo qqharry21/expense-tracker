@@ -36,7 +36,7 @@ import { ExpenseForm } from './ExpenseForm';
 import { currency, expenseCategory, frequency, Level } from '@/lib';
 import { getAmountAndFrequencyLevel, getFrequencyColor } from '@/lib/helper';
 import { Types } from '@/lib/types';
-import { cn } from '@/lib/utils';
+import { cn, formatNumberWithCommas } from '@/lib/utils';
 
 export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -57,6 +57,12 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
   const level = useMemo(
     () => getAmountAndFrequencyLevel(expense.amount, expense.frequency),
     [expense.amount, expense.frequency],
+  );
+
+  const amount = useMemo(
+    () =>
+      formatNumberWithCommas(Math.floor(expense.amount * expense.currencyRate)),
+    [expense.amount, expense.currencyRate],
   );
 
   const handleOpenDialog = useCallback(() => {
@@ -135,7 +141,7 @@ export const ExpenseCard = ({ expense }: { expense: Types.Expense }) => {
                   'text-green-500': level === Level.LOW,
                 })}
               >
-                {currency[expense.currency].symbol} {expense.amount}
+                {currency[expense.currency].symbol} {amount} 元
               </span>
             </div>
             {/* <div className='flex flex-wrap gap-2 mt-2'>

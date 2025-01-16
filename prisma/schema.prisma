@@ -100,6 +100,11 @@ enum ExpenseCategory {
   LEARNING // 學習
   INVESTMENT // 投資
   INSURANCE // 保險
+  RENTAL // 租金
+  TAXES // 稅金
+  CHARITY // 慈善
+  GIFT // 禮物
+  FAMILY // 家庭
   TRAVEL // 旅遊
   OTHER // 其他
 }
@@ -141,6 +146,7 @@ model Expense {
   title          String
   category       ExpenseCategory
   currency       Currency
+  currencyRate   Float
   amount         Float
   frequency      Frequency
   description    String

@@ -258,7 +258,7 @@ export const ExpenseForm = ({
                     <SelectValue placeholder="選擇類別" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent className="max-h-60">
                   {Object.entries(expenseCategory).map(([key, value]) => (
                     <SelectItem key={key} value={key}>
                       <span className="flex items-center gap-2">

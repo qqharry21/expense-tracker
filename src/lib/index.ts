@@ -1,9 +1,13 @@
 import {
+  BookUserIcon,
   CircleDollarSignIcon,
   CogIcon,
-  DramaIcon,
+  Gamepad2Icon,
+  GiftIcon,
   GraduationCapIcon,
   HeartPulseIcon,
+  HomeIcon,
+  LandmarkIcon,
   PizzaIcon,
   PlaneIcon,
   ReceiptIcon,
@@ -26,7 +30,7 @@ export const expenseCategory = {
   },
   [Types.ExpenseCategory.ENTERTAINMENT]: {
     label: '娛樂',
-    icon: DramaIcon,
+    icon: Gamepad2Icon,
     color: 'hsl(var(--chart-3))',
   },
   [Types.ExpenseCategory.HEALTH]: {
@@ -64,10 +68,30 @@ export const expenseCategory = {
     icon: ShieldPlusIcon,
     color: 'hsl(var(--chart-10))',
   },
+  [Types.ExpenseCategory.RENTAL]: {
+    label: '租金',
+    icon: HomeIcon,
+    color: 'hsl(var(--chart-11))',
+  },
+  [Types.ExpenseCategory.TAXES]: {
+    label: '稅金',
+    icon: LandmarkIcon,
+    color: 'hsl(var(--chart-12))',
+  },
+  [Types.ExpenseCategory.GIFT]: {
+    label: '禮物',
+    icon: GiftIcon,
+    color: 'hsl(var(--chart-13))',
+  },
+  [Types.ExpenseCategory.FAMILY]: {
+    label: '家庭',
+    icon: BookUserIcon,
+    color: 'hsl(var(--chart-14))',
+  },
   [Types.ExpenseCategory.OTHER]: {
     label: '其他',
     icon: CogIcon,
-    color: 'hsl(var(--chart-11))',
+    color: 'hsl(var(--chart-15))',
   },
 } as const;
 

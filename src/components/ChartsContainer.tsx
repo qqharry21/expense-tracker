@@ -1,6 +1,16 @@
-export const ChartsContainer = ({ children }: PropsWithChildren) => {
+import { cn } from '@/lib/utils';
+
+export const ChartsContainer = ({
+  children,
+  className,
+}: PropsWithChildren & { className?: string }) => {
   return (
-    <div className="grid gap-8 border-b border-border pb-8 sm:grid-cols-2 xl:grid-cols-4">
+    <div
+      className={cn(
+        'grid grid-cols-2 gap-6 border-b border-border pb-8',
+        className,
+      )}
+    >
       {children}
     </div>
   );

@@ -31,9 +31,13 @@ const chartConfig = {
 
 interface ChartProps {
   expenses: Types.Expense[];
+  className?: string;
 }
 
-export function ExpenseCategoryStackedBarChart({ expenses }: ChartProps) {
+export function ExpenseCategoryStackedBarChart({
+  expenses,
+  className,
+}: ChartProps) {
   const transformSummaryToChartData = useCallback(
     (data: { name: string; amount: number }[]) => {
       return data.map(({ name, amount }) => ({
@@ -54,7 +58,7 @@ export function ExpenseCategoryStackedBarChart({ expenses }: ChartProps) {
   );
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <CardTitle>當月支出類別分佈</CardTitle>
         <CardDescription>顯示前五大支出類別的分佈情況</CardDescription>

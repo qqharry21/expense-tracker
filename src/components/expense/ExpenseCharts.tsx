@@ -1,20 +1,22 @@
-import { prisma } from '@/lib/prisma';
+import { getExpenseData } from '@/lib/api/expense';
 import { ExpenseCategoryStackedBarChart } from '../charts/ExpenseCategoryStackedBarChart';
 import { TotalExpensesTrendLineChart } from '../charts/TotalExpensesTrendLineChart';
 
 export const ExpenseCharts = async ({ userId }: { userId?: string }) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  const expenses = (
-    await prisma.expense.findMany({
-      where: { userId },
-      orderBy: [{ amount: 'desc' }, { frequency: 'asc' }],
-    })
-  ).reverse();
+  const expenses6Months = await getExpenseData('6months', userId);
+  const expensesThisMonths = await getExpenseData('month', userId);
 
   return (
-    <div className="grid gap-8 border-b border-border pb-8 sm:grid-cols-2 xl:grid-cols-4">
-      <ExpenseCategoryStackedBarChart expenses={expenses} />
-      <TotalExpensesTrendLineChart expenses={expenses} totalMonths={6} />
-    </div>
+    <>
+      <ExpenseCategoryStackedBarChart
+        expenses={expensesThisMonths}
+        className="col-span-2 sm:col-span-1"
+      />
+      <TotalExpensesTrendLineChart
+        expenses={expenses6Months}
+        totalMonths={6}
+        className="col-span-2 sm:col-span-1"
+      />
+    </>
   );
 };

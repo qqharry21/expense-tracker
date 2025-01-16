@@ -32,11 +32,13 @@ const chartConfig = {
 interface ChartProps {
   expenses: Types.Expense[];
   totalMonths: number;
+  className?: string;
 }
 
 export function TotalExpensesTrendLineChart({
   expenses,
   totalMonths,
+  className,
 }: ChartProps) {
   const data = useMemo(
     () => getLastMonthsTotalExpenses(expenses, totalMonths).reverse(),
@@ -49,7 +51,7 @@ export function TotalExpensesTrendLineChart({
   );
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <CardTitle>總支出趨勢</CardTitle>
         <CardDescription>顯示過去{totalMonths}個月的總支出金額</CardDescription>

@@ -2,12 +2,14 @@ import {
   differenceInCalendarDays,
   differenceInCalendarWeeks,
   endOfMonth,
+  endOfYear,
   isAfter,
   isBefore,
   isSameDay,
   isWithinInterval,
   startOfDay,
   startOfMonth,
+  startOfYear,
 } from 'date-fns';
 import { Level, thresholds } from '.';
 import { Types } from './types';
@@ -15,9 +17,9 @@ import { getLocalizeDate } from './utils';
 
 /**
  * 取得金額與頻率的嚴重程度
- * @param amount
- * @param frequency
- * @returns
+ * @param amount 金額
+ * @param frequency 頻率
+ * @returns 嚴重程度
  */
 export const getAmountAndFrequencyLevel = (
   amount: number,
@@ -30,6 +32,11 @@ export const getAmountAndFrequencyLevel = (
   return Level.LOW;
 };
 
+/**
+ * 取得頻率對應的顏色
+ * @param frequency 頻率
+ * @returns 顏色
+ */
 export const getFrequencyColor = (frequency: Types.Frequency) => {
   const frequencyColor = {
     [Types.Frequency.ONE_TIME]: 'bg-blue-100 text-blue-800',
@@ -43,9 +50,9 @@ export const getFrequencyColor = (frequency: Types.Frequency) => {
 
 /**
  * 判斷支出是否在指定日期
- * @param date
- * @param expense
- * @returns
+ * @param date 日期
+ * @param expense 支出
+ * @returns 是否在指定日期
  */
 export const isExpenseOnDate = (date: Date, expense: Types.Expense) => {
   const { startTime, endTime, frequency, includeEndTime } = expense;
@@ -94,6 +101,10 @@ export const isExpenseOnDate = (date: Date, expense: Types.Expense) => {
   }
 };
 
+/**
+ * 取得最近六個月的開始和結束日期
+ * @returns 開始和結束日期
+ */
 export const getSixMonthStartEndDate = () => {
   const currentDate = new Date();
   const sixMonthsAgo = currentDate.setMonth(currentDate.getMonth() - 5);
@@ -110,6 +121,10 @@ export const getSixMonthStartEndDate = () => {
   };
 };
 
+/**
+ * 取得最近六個月的字串表示
+ * @returns 六個月的字串表示
+ */
 export const getSixMonthString = () => {
   const { startMonth, startYear, endMonth, endYear } =
     getSixMonthStartEndDate();
@@ -120,40 +135,38 @@ export const getSixMonthString = () => {
 };
 
 /**
- * 加總這個月每個支出類別的金額，並依照支出頻率計算總金額。
- * 若支出頻率為每日，則乘上當月的天數；
- * 若支出頻率為每週，則乘上當月剩餘的週數；
- * 若支出頻率為每月，則直接加總金額。
- * 若有起始時間，則以起始時間含當天再開始計算；
- * 若有結束時間，則以結束時間含當天再結束計算。
+ * 通用的支出總結函數
+ * @param expenses 支出數據陣列
+ * @param referenceStartDate 參考開始日期
+ * @param referenceEndDate 參考結束日期
+ * @param interval 間隔類型（'monthly' 或 'yearly'）
+ * @returns 每個支出類別的金額
  */
-export const getMonthlyExpenseSummary = (
+const getExpenseSummary = (
   expenses: Types.Expense[],
-  referenceDate: Date = new Date(),
+  referenceStartDate: Date,
+  referenceEndDate: Date,
+  interval: 'monthly' | 'yearly',
 ): Record<Types.$Enums.ExpenseCategory, number> => {
-  const currentMonthStart = startOfMonth(referenceDate);
-  const currentMonthEnd = endOfMonth(referenceDate);
-
   return expenses.reduce(
     (summary, expense) => {
-      const { amount, currency, frequency, startTime, endTime, category } =
-        expense;
+      const { amount, frequency, startTime, endTime, category } = expense;
 
       // 確定支出有效的起始和結束時間
-      const effectiveStart = isAfter(new Date(startTime), currentMonthStart)
+      const effectiveStart = isAfter(new Date(startTime), referenceStartDate)
         ? new Date(startTime)
-        : currentMonthStart;
+        : referenceStartDate;
       let effectiveEnd;
       if (endTime) {
-        if (isBefore(endTime, currentMonthStart)) {
+        if (isBefore(endTime, referenceStartDate)) {
           effectiveEnd = null;
-        } else if (isAfter(endTime, currentMonthEnd)) {
-          effectiveEnd = currentMonthEnd;
+        } else if (isAfter(endTime, referenceEndDate)) {
+          effectiveEnd = referenceEndDate;
         } else {
           effectiveEnd = new Date(endTime);
         }
       } else {
-        effectiveEnd = currentMonthEnd;
+        effectiveEnd = referenceEndDate;
       }
 
       // 如果有效結束時間早於有效起始時間，支出不計算
@@ -166,6 +179,7 @@ export const getMonthlyExpenseSummary = (
         effectiveStart,
         effectiveEnd,
         new Date(startTime),
+        interval,
       );
 
       const totalAmount = Math.floor(amount * occurrences);
@@ -181,29 +195,74 @@ export const getMonthlyExpenseSummary = (
 };
 
 /**
+ * 加總這個月每個支出類別的金額，並依照支出頻率計算總金額
+ * @param expenses 支出數據陣列
+ * @param referenceDate 參考日期，默認為當前日期
+ * @returns 每個支出類別的金額
+ */
+export const getMonthlyExpenseSummary = (
+  expenses: Types.Expense[],
+  referenceDate: Date = new Date(),
+): Record<Types.$Enums.ExpenseCategory, number> => {
+  const currentMonthStart = startOfMonth(referenceDate);
+  const currentMonthEnd = endOfMonth(referenceDate);
+  return getExpenseSummary(
+    expenses,
+    currentMonthStart,
+    currentMonthEnd,
+    'monthly',
+  );
+};
+
+/**
+ * 加總這個年份每個支出類別的金額，並依照支出頻率計算總金額
+ * @param expenses 支出數據陣列
+ * @param referenceDate 參考日期，默認為當前日期
+ * @returns 每個支出類別的金額
+ */
+export const getYearlyExpenseSummary = (
+  expenses: Types.Expense[],
+  referenceDate: Date = new Date(),
+): Record<Types.$Enums.ExpenseCategory, number> => {
+  const currentYearStart = startOfYear(referenceDate);
+  const currentYearEnd = endOfYear(referenceDate);
+  return getExpenseSummary(
+    expenses,
+    currentYearStart,
+    currentYearEnd,
+    'yearly',
+  );
+};
+
+/**
  * 計算支出的當月金額
+ * @param frequency 頻率
+ * @param effectiveStart 有效開始日期
+ * @param effectiveEnd 有效結束日期
+ * @param startTime 開始時間
+ * @param interval 間隔類型
+ * @returns 當月金額
  */
 const calculateOccurrences = (
   frequency: Types.Frequency,
   effectiveStart: Date,
   effectiveEnd: Date,
   startTime: Date,
+  interval: 'monthly' | 'yearly',
 ): number => {
   switch (frequency) {
     case Types.Frequency.DAILY:
       return differenceInCalendarDays(effectiveEnd, effectiveStart) + 1;
-
     case Types.Frequency.WEEKLY:
       return (
         differenceInCalendarWeeks(effectiveEnd, effectiveStart, {
           weekStartsOn: 1,
         }) + 1
       );
-
-    case Types.Frequency.ANNUALLY:
-      return 1 / 12;
-
     case Types.Frequency.MONTHLY:
+      return interval === 'yearly' ? 12 : 1;
+    case Types.Frequency.ANNUALLY:
+      return interval === 'yearly' ? 1 : 1 / 12;
     case Types.Frequency.ONE_TIME:
       return isWithinInterval(startTime, {
         start: effectiveStart,
@@ -211,7 +270,6 @@ const calculateOccurrences = (
       })
         ? 1
         : 0;
-
     default:
       return 0;
   }
@@ -219,24 +277,55 @@ const calculateOccurrences = (
 
 /**
  * 取得支出類別的前五大金額
+ * @param summary 支出類別金額總結
+ * @returns 前五大金額的支出類別
  */
 export const getTopFiveCategories = (
   summary: Record<Types.$Enums.ExpenseCategory, number>,
 ): { name: string; amount: number }[] => {
-  console.log('🚨 - summary', summary);
   return Object.entries(summary)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
     .map(([name, amount]) => ({ name, amount }));
 };
 
+/**
+ * 取得當月的總支出
+ * @param expenses 支出數據陣列
+ * @param referenceDate 參考日期，默認為當前日期
+ * @returns 總支出金額
+ */
 export const getMonthlyTotalExpenses = (
   expenses: Types.Expense[],
   referenceDate: Date = new Date(),
 ): number => {
-  return Object.values(
-    getMonthlyExpenseSummary(expenses, referenceDate),
-  ).reduce((total, amount) => total + amount, 0);
+  const summary = getMonthlyExpenseSummary(expenses, referenceDate);
+  return calculateTotalExpenses(summary);
+};
+
+/**
+ * 計算指定年份的總支出金額
+ * @param expenses 支出項目列表
+ * @param referenceDate 參考日期，用於確定年份，預設為當前日期
+ * @returns 指定年份的總支出金額
+ */
+export const getYearlyTotalExpenses = (
+  expenses: Types.Expense[],
+  referenceDate: Date = new Date(),
+): number => {
+  const summary = getYearlyExpenseSummary(expenses, referenceDate);
+  return calculateTotalExpenses(summary);
+};
+
+/**
+ * 計算總支出金額
+ * @param summary 支出類別金額總結
+ * @returns 總支出金額
+ */
+const calculateTotalExpenses = (
+  summary: Record<Types.$Enums.ExpenseCategory, number>,
+): number => {
+  return Object.values(summary).reduce((total, amount) => total + amount, 0);
 };
 
 /**

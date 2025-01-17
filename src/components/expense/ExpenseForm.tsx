@@ -320,9 +320,11 @@ export const ExpenseForm = ({
                     field.onChange(formatNumber(event.target.value));
                   }}
                   selectedOption={form.watch('currency')}
-                  onSelectChange={(value) =>
-                    form.setValue('currency', value as Types.Currency)
-                  }
+                  onSelectChange={(value) => {
+                    form.setValue('currency', value as Types.Currency, {
+                      shouldDirty: true,
+                    });
+                  }}
                 />
               </FormControl>
               <FormMessage />

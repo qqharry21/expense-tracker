@@ -23,6 +23,7 @@ export const expenseSchema = z
     startTime: z.date({ message: '開始日期為必填' }),
     endTime: z.date().optional().nullable(),
     currency: currencySchema,
+    currencyRate: z.number(),
     amount: amountSchema.max(500000, {
       message: '金額必須介於 1 至 500,000 之間',
     }),

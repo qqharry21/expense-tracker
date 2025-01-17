@@ -79,6 +79,8 @@ function Calendar({
             <ChevronRightIcon {...props} className="size-4" />
           ),
       }}
+      startMonth={new Date(2024, 12)}
+      endMonth={new Date(2080, 11)}
       {...props}
     />
   );

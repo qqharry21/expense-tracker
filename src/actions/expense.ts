@@ -7,6 +7,7 @@ import { actionData } from 'http-react';
 import { revalidatePath } from 'next/cache';
 
 export async function createExpense(data: any) {
+  console.log('🚨 - data', data);
   try {
     const session = await auth();
     if (!session)

@@ -1,6 +1,6 @@
 'use client';
 
-import { addDays, format } from 'date-fns';
+import { addDays, format, isSameDay } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -25,15 +25,17 @@ import { cn, formatNumber } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { createExpense, updateExpense } from '@/actions/expense';
-import { expenseCategory, frequency } from '@/lib';
+import { useExchangeRates } from '@/context/ExchangeRateProvider';
+import { currency, expenseCategory, frequency } from '@/lib';
 import { useMutation } from 'http-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { CurrencySelectInput } from '../CurrencySelectInput';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -56,6 +58,7 @@ export const ExpenseForm = ({
     startTime: new Date(),
     category: Types.ExpenseCategory.FOOD,
     currency: Types.Currency.TWD,
+    currencyRate: 1,
     amount: 500,
     frequency: Types.Frequency.MONTHLY,
     description: '',
@@ -64,20 +67,28 @@ export const ExpenseForm = ({
   onSuccess,
   onError,
 }: ExpenseFormProps) => {
+  const exchangeRates = useExchangeRates();
   const [hasEndTime, setHasEndTime] = useState(false);
   const form = useForm<Types.Expense>({
     mode: 'onTouched',
     resolver: zodResolver(expenseSchema),
     defaultValues,
   });
-  console.log('form', form.getValues());
-  console.log('form errors', form.formState.errors);
-  console.log('form isDirty', form.formState.isDirty);
-  console.log('form isValid', form.formState.isValid);
 
   const currentFrequency = form.watch('frequency');
   const startTime = form.watch('startTime');
   const includeEndTime = form.watch('includeEndTime');
+  const currentCurrency = form.watch('currency');
+
+  const targetExchangeRate = useMemo(() => {
+    const findRate = (date: Date) =>
+      exchangeRates?.find((rate) => isSameDay(rate.timestamp, date))?.rates[
+        currentCurrency as keyof Types.Rates
+      ];
+
+    return findRate(startTime) ?? findRate(new Date()) ?? 1;
+  }, [currentCurrency, startTime, exchangeRates]);
+
   const disabledEndTime = useMemo(() => {
     return addDays(startTime, includeEndTime ? 1 : 2);
   }, [startTime, includeEndTime]);
@@ -105,6 +116,13 @@ export const ExpenseForm = ({
       e.preventDefault();
     }
   };
+
+  useEffect(() => {
+    if (currency) {
+      form.setValue('currencyRate', targetExchangeRate);
+    }
+  }, [targetExchangeRate]);
+
   return (
     <Form {...form}>
       <form
@@ -327,6 +345,11 @@ export const ExpenseForm = ({
                   }}
                 />
               </FormControl>
+              {currentCurrency !== 'TWD' && (
+                <FormDescription>
+                  當前匯率為 1 {currentCurrency} = {targetExchangeRate} TWD
+                </FormDescription>
+              )}
               <FormMessage />
             </FormItem>
           )}

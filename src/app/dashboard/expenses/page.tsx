@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { ExpenseCardList } from '@/components/expense/ExpenseCardList';
-import { ExpenseHeader } from '@/components/expense/ExpenseHeader';
 
 import { auth } from '@/auth';
 import { ChartsContainer } from '@/components/ChartsContainer';
@@ -29,8 +28,7 @@ export default async function Page() {
   const userId = session.user.id;
 
   return (
-    <div className="container mx-auto space-y-8 p-4">
-      <ExpenseHeader />
+    <>
       <ChartsContainer>
         <Suspense fallback={<ExpenseStatsSkeleton length={2} />}>
           <ExpenseStats userId={userId} />
@@ -44,6 +42,6 @@ export default async function Page() {
       <Suspense fallback={<ExpenseCardListSkeleton />}>
         <ExpenseCardList userId={userId} />
       </Suspense>
-    </div>
+    </>
   );
 }

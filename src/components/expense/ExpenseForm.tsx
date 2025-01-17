@@ -70,7 +70,7 @@ export const ExpenseForm = ({
   const exchangeRates = useExchangeRates();
   const [hasEndTime, setHasEndTime] = useState(false);
   const form = useForm<Types.Expense>({
-    mode: 'onTouched',
+    mode: 'onChange',
     resolver: zodResolver(expenseSchema),
     defaultValues,
   });

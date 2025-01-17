@@ -15,6 +15,8 @@ export interface Route {
   value: string;
   url: string;
   icon: React.FC | null;
+  hideInSidebar?: boolean;
+  hideSubRoutes?: boolean;
   subRoutes?: Route[];
 }
 
@@ -30,6 +32,16 @@ export const routes: Route[] = [
     value: 'expenses',
     url: '/dashboard/expenses',
     icon: ShoppingCartIcon,
+    hideSubRoutes: true,
+    subRoutes: [
+      {
+        name: '報表',
+        url: '/dashboard/expenses/report',
+        value: 'report',
+        hideInSidebar: true,
+        icon: null,
+      },
+    ],
   },
   {
     name: '收入',

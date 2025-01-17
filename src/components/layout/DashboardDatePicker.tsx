@@ -42,8 +42,8 @@ export function DashboardDatePicker({ expenses }: DashboardDatePickerProps) {
           showOutsideDays={false}
           selected={selectedDate}
           month={selectedMonth}
-          startMonth={new Date(1990, 1)}
-          endMonth={new Date(2050, 11)}
+          startMonth={new Date(2024, 12)}
+          endMonth={new Date(2080, 11)}
           onSelect={setSelectedDate}
           onMonthChange={setSelectedMonth}
           className="[&_[role=gridcell]]:w-[33px] [&_th]:w-[33px]"

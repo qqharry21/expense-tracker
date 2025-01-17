@@ -110,7 +110,7 @@ export const ExpenseForm = ({
       <form
         onSubmit={onSubmit}
         onKeyDown={handleKeydown}
-        className="grid grid-cols-2 gap-x-2 gap-y-4 px-1 py-2 md:px-4 md:py-4"
+        className="grid grid-cols-2 gap-2 px-1 py-2 md:gap-y-4 md:px-4 md:py-4"
       >
         <FormField
           name="title"

@@ -30,7 +30,7 @@ export const ExpenseHeader = () => {
             <DialogHeader>
               <DialogTitle>新增支出</DialogTitle>
             </DialogHeader>
-            <div className="overflow-auto md:max-h-[650px]">
+            <div className="max-h-[600px] overflow-auto md:max-h-[650px]">
               <ExpenseForm
                 mode="create"
                 onSuccess={() => setDialogOpen(false)}

@@ -14,12 +14,12 @@ export const ExpenseStats = async ({ userId }: { userId?: string }) => {
       <Stats
         title="這個月支出"
         content={<ExpenseStatContent amount={monthlyTotal} />}
-        className="h-full"
+        className="col-span-2 h-full sm:col-span-1"
       />
       <Stats
         title="今年預計支出"
         content={<ExpenseStatContent amount={yearlyTotal} />}
-        className="h-full"
+        className="col-span-2 h-full sm:col-span-1"
       />
     </>
   );

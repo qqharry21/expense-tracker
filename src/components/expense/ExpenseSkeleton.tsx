@@ -5,7 +5,7 @@ export const ExpenseChartSkeleton = ({ length }: { length: number }) => {
   return (
     <>
       {[...Array(length)].map((_, index) => (
-        <Card key={index}>
+        <Card key={index} className="col-span-2 sm:col-span-1">
           <CardHeader className="flex flex-col">
             <Skeleton className="h-6 w-1/2" />
             <Skeleton className="h-4 w-1/4" />
@@ -41,7 +41,7 @@ export const ExpenseStatsSkeleton = ({ length }: { length: number }) => {
   return (
     <>
       {[...Array(length)].map((_, index) => (
-        <Card key={index}>
+        <Card key={index} className="col-span-2 sm:col-span-1">
           <CardHeader>
             <Skeleton className="h-4 w-1/4" />
           </CardHeader>

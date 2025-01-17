@@ -139,14 +139,14 @@ export const getSixMonthString = () => {
  * @param expenses 支出數據陣列
  * @param referenceStartDate 參考開始日期
  * @param referenceEndDate 參考結束日期
- * @param interval 間隔類型（'monthly' 或 'yearly'）
+ * @param interval 間隔類型（'monthly' 或 'annual'）
  * @returns 每個支出類別的金額
  */
 const getExpenseSummary = (
   expenses: Types.Expense[],
   referenceStartDate: Date,
   referenceEndDate: Date,
-  interval: 'monthly' | 'yearly',
+  interval: 'monthly' | 'annual',
 ): Record<Types.$Enums.ExpenseCategory, number> => {
   return expenses.reduce(
     (summary, expense) => {
@@ -201,7 +201,7 @@ const getExpenseSummary = (
  * @param referenceDate 參考日期，默認為當前日期
  * @returns 每個支出類別的金額
  */
-export const getMonthlyExpenseSummary = (
+export const calculateMonthlyExpenseSummary = (
   expenses: Types.Expense[],
   referenceDate: Date = new Date(),
 ): Record<Types.$Enums.ExpenseCategory, number> => {
@@ -221,7 +221,7 @@ export const getMonthlyExpenseSummary = (
  * @param referenceDate 參考日期，默認為當前日期
  * @returns 每個支出類別的金額
  */
-export const getYearlyExpenseSummary = (
+export const calculateAnnualExpenseSummary = (
   expenses: Types.Expense[],
   referenceDate: Date = new Date(),
 ): Record<Types.$Enums.ExpenseCategory, number> => {
@@ -231,25 +231,26 @@ export const getYearlyExpenseSummary = (
     expenses,
     currentYearStart,
     currentYearEnd,
-    'yearly',
+    'annual',
   );
 };
 
 /**
- * 計算支出的當月金額
- * @param frequency 頻率
- * @param effectiveStart 有效開始日期
- * @param effectiveEnd 有效結束日期
- * @param startTime 開始時間
- * @param interval 間隔類型
- * @returns 當月金額
+ * 計算在指定時間範圍內的事件發生次數。
+ *
+ * @param {Types.Frequency} frequency - 事件的頻率類型。
+ * @param {Date} effectiveStart - 計算的開始日期。
+ * @param {Date} effectiveEnd - 計算的結束日期。
+ * @param {Date} startTime - 事件的開始時間。
+ * @param {'monthly' | 'annual'} interval - 計算的間隔類型，可以是 'monthly' 或 'annual'。
+ * @returns {number} - 在指定時間範圍內的事件發生次數。
  */
 const calculateOccurrences = (
   frequency: Types.Frequency,
   effectiveStart: Date,
   effectiveEnd: Date,
   startTime: Date,
-  interval: 'monthly' | 'yearly',
+  interval: 'monthly' | 'annual',
 ): number => {
   switch (frequency) {
     case Types.Frequency.DAILY:
@@ -261,9 +262,9 @@ const calculateOccurrences = (
         }) + 1
       );
     case Types.Frequency.MONTHLY:
-      return interval === 'yearly' ? 12 : 1;
+      return interval === 'annual' ? 12 : 1;
     case Types.Frequency.ANNUALLY:
-      return interval === 'yearly' ? 1 : 1 / 12;
+      return interval === 'annual' ? 1 : 1 / 12;
     case Types.Frequency.ONE_TIME:
       return isWithinInterval(startTime, {
         start: effectiveStart,
@@ -281,7 +282,7 @@ const calculateOccurrences = (
  * @param summary 支出類別金額總結
  * @returns 前五大金額的支出類別
  */
-export const getTopFiveCategories = (
+export const retrieveTopFiveCategories = (
   summary: Record<Types.$Enums.ExpenseCategory, number>,
 ): { name: string; amount: number }[] => {
   return Object.entries(summary)
@@ -296,12 +297,12 @@ export const getTopFiveCategories = (
  * @param referenceDate 參考日期，默認為當前日期
  * @returns 總支出金額
  */
-export const getMonthlyTotalExpenses = (
+export const aggregateMonthlyExpenses = (
   expenses: Types.Expense[],
   referenceDate: Date = new Date(),
 ): number => {
-  const summary = getMonthlyExpenseSummary(expenses, referenceDate);
-  return calculateTotalExpenses(summary);
+  const summary = calculateMonthlyExpenseSummary(expenses, referenceDate);
+  return aggregateExpenses(summary);
 };
 
 /**
@@ -310,12 +311,12 @@ export const getMonthlyTotalExpenses = (
  * @param referenceDate 參考日期，用於確定年份，預設為當前日期
  * @returns 指定年份的總支出金額
  */
-export const getYearlyTotalExpenses = (
+export const aggregateAnnualExpenses = (
   expenses: Types.Expense[],
   referenceDate: Date = new Date(),
 ): number => {
-  const summary = getYearlyExpenseSummary(expenses, referenceDate);
-  return calculateTotalExpenses(summary);
+  const summary = calculateAnnualExpenseSummary(expenses, referenceDate);
+  return aggregateExpenses(summary);
 };
 
 /**
@@ -323,7 +324,7 @@ export const getYearlyTotalExpenses = (
  * @param summary 支出類別金額總結
  * @returns 總支出金額
  */
-const calculateTotalExpenses = (
+const aggregateExpenses = (
   summary: Record<Types.$Enums.ExpenseCategory, number>,
 ): number => {
   return Object.values(summary).reduce((total, amount) => total + amount, 0);
@@ -336,7 +337,7 @@ const calculateTotalExpenses = (
  * @param referenceDate 參考日期，默認為當前日期
  * @returns 月份與金額的陣列
  */
-export const getLastMonthsTotalExpenses = (
+export const calculateRecentMonthlyExpenses = (
   expenses: Types.Expense[],
   totalMonths: number,
   referenceDate: Date = new Date(),
@@ -350,7 +351,7 @@ export const getLastMonthsTotalExpenses = (
   return months.map((date) => {
     return {
       month: getLocalizeDate(date, 'MMM'),
-      amount: getMonthlyTotalExpenses(expenses, date),
+      amount: aggregateMonthlyExpenses(expenses, date),
     };
   });
 };
@@ -361,12 +362,12 @@ export const getLastMonthsTotalExpenses = (
  * @param referenceDate 參考日期，默認為當前日期
  * @returns 成長百分比，如果上個月總支出為0則返回null
  */
-export const getMonthlyGrowth = (
+export const calculateMonthlyExpenseGrowth = (
   expenses: Types.Expense[],
   referenceDate: Date = new Date(),
 ): number | null => {
-  const currentMonth = getMonthlyTotalExpenses(expenses, referenceDate);
-  const lastMonth = getMonthlyTotalExpenses(
+  const currentMonth = aggregateMonthlyExpenses(expenses, referenceDate);
+  const lastMonth = aggregateMonthlyExpenses(
     expenses,
     new Date(referenceDate.setMonth(referenceDate.getMonth() - 1)),
   );

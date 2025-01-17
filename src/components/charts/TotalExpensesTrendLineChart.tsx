@@ -17,7 +17,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { getLastMonthsTotalExpenses, getMonthlyGrowth } from '@/lib/helper';
+import {
+  calculateMonthlyExpenseGrowth,
+  calculateRecentMonthlyExpenses,
+} from '@/lib/helper';
 import { Types } from '@/lib/types';
 import { getDecimal } from '@/lib/utils';
 import { useMemo } from 'react';
@@ -41,12 +44,12 @@ export function TotalExpensesTrendLineChart({
   className,
 }: ChartProps) {
   const data = useMemo(
-    () => getLastMonthsTotalExpenses(expenses, totalMonths).reverse(),
+    () => calculateRecentMonthlyExpenses(expenses, totalMonths).reverse(),
     [expenses, totalMonths],
   );
 
   const monthlyGrowth = useMemo(
-    () => getDecimal((getMonthlyGrowth(expenses) ?? 0) / 100, 2),
+    () => getDecimal((calculateMonthlyExpenseGrowth(expenses) ?? 0) / 100, 2),
     [expenses],
   );
 

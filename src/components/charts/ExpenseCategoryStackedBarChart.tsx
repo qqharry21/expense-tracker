@@ -18,7 +18,10 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { expenseCategory } from '@/lib';
-import { getMonthlyExpenseSummary, getTopFiveCategories } from '@/lib/helper';
+import {
+  calculateMonthlyExpenseSummary,
+  retrieveTopFiveCategories,
+} from '@/lib/helper';
 import { Types } from '@/lib/types';
 import { useCallback, useMemo } from 'react';
 
@@ -52,7 +55,7 @@ export function ExpenseCategoryStackedBarChart({
   const data = useMemo(
     () =>
       transformSummaryToChartData(
-        getTopFiveCategories(getMonthlyExpenseSummary(expenses)),
+        retrieveTopFiveCategories(calculateMonthlyExpenseSummary(expenses)),
       ),
     [expenses],
   );
@@ -68,7 +71,6 @@ export function ExpenseCategoryStackedBarChart({
           <BarChart
             accessibilityLayer
             data={data}
-            // layout="vertical"
             margin={{
               top: 20,
             }}

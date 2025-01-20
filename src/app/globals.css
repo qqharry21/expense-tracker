@@ -101,6 +101,12 @@
   body {
     @apply bg-background font-geistSans text-foreground selection:bg-primary selection:text-primary-foreground;
   }
+
+  input,
+  textarea,
+  select {
+    @apply text-base;
+  }
 }
 
 @layer utilities {

@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
 
 import { auth } from '@/auth';
-import { IncomeCardList } from '@/components/income/IncomeCardList';
-import { IncomeHeader } from '@/components/income/IncomeHeader';
+import { ComingSoon } from '@/components/ComingSoon';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 
@@ -27,11 +26,12 @@ export default async function Page() {
   ).reverse();
 
   return (
-    <div className="container mx-auto space-y-8 p-4">
+    <>
       {/* <p>收入來源分佈 - 收入來源堆疊柱狀圖 BarChart</p>
       <p>總收入趨勢 - 總收入折線圖 LineChart</p> */}
-      <IncomeHeader />
-      <IncomeCardList incomes={incomes} />
-    </div>
+      {/* <IncomeHeader />
+      <IncomeCardList incomes={incomes} /> */}
+      <ComingSoon />
+    </>
   );
 }

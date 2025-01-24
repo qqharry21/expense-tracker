@@ -1,12 +1,10 @@
-import { auth } from '@/auth';
 import { DollarSign } from 'lucide-react';
+import { User } from 'next-auth';
 import Link from 'next/link';
 import { SigninButton } from '../SigninButton';
 import { UserAvatarDropdown } from '../UserAvatarDropdown';
 
-export const HomeHeader = async () => {
-  const session = await auth();
-
+export const HomeHeader = async ({ user }: { user?: User }) => {
   return (
     <header className="absolute left-0 right-0 top-0 z-10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,11 +15,7 @@ export const HomeHeader = async () => {
             </Link>
           </div>
           <div className="flex items-center space-x-4">
-            {session?.user ? (
-              <UserAvatarDropdown user={session.user} />
-            ) : (
-              <SigninButton />
-            )}
+            {user ? <UserAvatarDropdown user={user} /> : <SigninButton />}
           </div>
         </div>
       </div>
